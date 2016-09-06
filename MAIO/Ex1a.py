@@ -39,13 +39,32 @@ rho13=(length*np.dot(L0,L2)-sum(L0)*sum(L2))/np.sqrt((length*np.dot(L0,L0)-(sum(
 rho13_2=(rho13-rho12*rho23)/np.sqrt((1-rho12**2)*(1-rho13**2))
 
 #%% say up to k=4
-Matrix=np.zeros(shape=(4,4))
-for i in range(0,4):
-    for j in range(0,4):
-        for m in range(0,4):
-            if np.abs(i-j)==m:
-                Matrix[i,j]=ARdata[m]
-            
+Phivector=np.zeros(20)
+for k in range(3,20):
+    
+    Kmax=k
+    Matrix=np.zeros(shape=(Kmax,Kmax))
+    for i in range(0,Kmax):
+        for j in range(0,Kmax):
+            for m in range(0,Kmax):
+                if np.abs(i-j)==m:
+                    Matrix[i,j]=ARdata[m]
+    
+    InvMatrix=inv(Matrix)
+    Kvec=np.dot(InvMatrix,ARdata[1:(Kmax+1)])
+    Phivector[k]= Kvec[Kmax-1]
+
+
+#%%
+ACfunction=ACfunction[1:(len(ACfunction)-1)]
+Phivector=np.zeros(20)
+Phivector[0]=ACfunction[0]
+Phivector[1]=(ACfunction[1]-(ACfunction[0])**2)/(1-(ACfunction[0])**2)
+for k in range(2,20):
+    
+    Phivector[2]=(ACfunction[2]-sum())
+
+
 
 #%%Plot data
 plt.figure(num=None, figsize=(5,4),dpi=150, facecolor='w', edgecolor='k')
@@ -59,5 +78,5 @@ plt.figure(num=None, figsize=(5,4),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(ACfunction, 'k-',linewidth=3)
 plt.ylabel('Rho',fontsize=20)
 plt.xlabel('Time lag',fontsize=20)
-plt.xlim([0,18])
+plt.xlim([0,100])
 plt.tick_params(axis='both', which='major', labelsize=20)
