@@ -1,6 +1,9 @@
 #Preambule
 import numpy as np
 import matplotlib.pyplot as plt
+import statsmodels.tsa.stattools as stat
+import matplotlib
+matplotlib.style.use('ggplot')
 
 #Constants
 alpha1=0.75
@@ -13,14 +16,16 @@ for i in range(2,length):
     ARdata[i]=alpha1*ARdata[i-1]+alpha2*ARdata[i-2]+np.random.normal(0,10)
 
 #Create Autocorrelation function
+length=len(ARdata)
+
 ACfunction=np.zeros(length)
 Mean=np.mean(ARdata)
 for k in range(0,length):
     ACvector=np.zeros(length-k)
-    for i in range(k,length-k):
-        ACvector[i]=(ARdata[i]-Mean)*(ARdata[i-k]-Mean)
+    for i in range(0,length-k):
+        ACvector[i]=(ARdata[i]-Mean)*(ARdata[i+k]-Mean)
     
-    ACfunction[k]=sum(ACvector[0:(length-k)])/np.var(ARdata)
+    ACfunction[k]=sum(ACvector)/np.var(ARdata)/(length-k)
 
 #Plot data
 plt.figure(num=None, figsize=(5,4),dpi=150, facecolor='w', edgecolor='k')
