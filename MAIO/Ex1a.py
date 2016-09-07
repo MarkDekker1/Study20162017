@@ -8,8 +8,8 @@ matplotlib.style.use('ggplot')
 
 #Constants
 alpha1=0.75
-alpha2=0.1
-length=500
+alpha2=-0.3
+length=100
 
 #Create AR(2) data
 ARdata=np.zeros(length)+1.
@@ -52,19 +52,34 @@ for k in range(3,20):
     
     InvMatrix=inv(Matrix)
     Kvec=np.dot(InvMatrix,ARdata[1:(Kmax+1)])
-    Phivector[k]= Kvec[Kmax-1]
+    Phivector[k]= Kvec[k-1]
 
 
 #%%
-ACfunction=ACfunction[1:(len(ACfunction)-1)]
-Phivector=np.zeros(20)
-Phivector[0]=ACfunction[0]
-Phivector[1]=(ACfunction[1]-(ACfunction[0])**2)/(1-(ACfunction[0])**2)
-for k in range(2,20):
-    
-    Phivector[2]=(ACfunction[2]-sum())
+SIZE=20
+PhiMatrix=np.zeros(shape=(SIZE,SIZE))
 
+PhiMatrix[0,0]=ACfunction[0]
+PhiMatrix[1,1]=(ACfunction[1]-(ACfunction[0])**2)/(1-(ACfunction[0])**2)
+for k in range(1,SIZE):
 
+    for j in range(0,k):
+        print(j)
+        PhiMatrix[k,j]=PhiMatrix[k-1,j]-PhiMatrix[k,k]*PhiMatrix[k-1,k-j]
+        
+    if k>=2:
+        Sumvec1=[]
+        Sum1vec2=[] 
+        Sum2vec2=[]  
+          
+        for j in range(0,k-1):
+            Sumvec1.append(PhiMatrix[k-1,j])
+            Sum1vec2.append(ACfunction[k-j])
+            Sum2vec2.append(ACfunction[j])
+            
+        PhiMatrix[k,k]=(ACfunction[k]-np.dot(Sumvec1,Sum1vec2))/(1-np.dot(Sumvec1,Sum2vec2))
+
+plt.plot(np.diag(PhiMatrix))
 
 #%%Plot data
 plt.figure(num=None, figsize=(5,4),dpi=150, facecolor='w', edgecolor='k')
@@ -78,5 +93,5 @@ plt.figure(num=None, figsize=(5,4),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(ACfunction, 'k-',linewidth=3)
 plt.ylabel('Rho',fontsize=20)
 plt.xlabel('Time lag',fontsize=20)
-plt.xlim([0,100])
+plt.xlim([0,len(ARdata)/3])
 plt.tick_params(axis='both', which='major', labelsize=20)
