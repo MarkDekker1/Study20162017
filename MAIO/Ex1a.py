@@ -66,7 +66,8 @@ plt.tick_params(axis='both', which='major', labelsize=20)
 
 #Plot partial autocorrelation function
 plt.figure(num=None, figsize=(5,4),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(np.diag(PhiMatrix), 'k-',linewidth=3)
+plt.plot(np.append([1],np.diag(PhiMatrix)), 'k-',linewidth=3)
+plt.plot(stat.pacf(ARdata), 'r-',linewidth=3)
 plt.ylabel('PACF',fontsize=20)
 plt.xlabel('Time lag',fontsize=20)
 plt.xlim([0,SIZE])

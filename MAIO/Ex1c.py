@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.style.use('ggplot')
 
 #Reading data
-f = open('C:\Users\Mark\Documents\Studie\Study20162017\MAIO\Data\Ex1_Data1.txt', 'r')
+f = open('Data\Ex1_Data2.txt', 'r')
 ARdata=[]
 for line in f:
     ARdata.append(float(line))
@@ -22,8 +22,6 @@ for k in range(0,length):
         ACvector[i]=(ARdata[i]-Mean)*(ARdata[i+k]-Mean)
     
     ACfunction[k]=sum(ACvector)/np.var(ARdata)/(length-k)
-
-#%% Partial autocorrelation function
 
 
 #%%Plot data
