@@ -16,7 +16,7 @@ ARdata=np.zeros(length)+2.
 for i in range(2,length):
     ARdata[i]=alpha1*ARdata[i-1]+alpha2*ARdata[i-2]
 
-#Create Autocorrelation function
+#%%Create Autocorrelation function
 ACfunction=np.zeros(length)
 Mean=np.mean(ARdata)
 for k in range(0,length):
