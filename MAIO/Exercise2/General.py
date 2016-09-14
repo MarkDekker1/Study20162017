@@ -108,6 +108,24 @@ for i in range(0,len(sawvec)):
 readvec=np.array(sawvec)-np.array(sinevec)
 freqvec=np.linspace(0,0.00005,51)
 
+#%% Exercise andere e
+#Create wavelength-varying saw tooth function with noise
+sawvec=[0]
+timevec=np.linspace(0,1000000,1001)
+wavelengthchooser=np.random.choice([-1,0,1])
+period=100000.+wavelengthchooser*20000.
+amplitude=1.+np.random.normal(0,0.1)
+for i in range(1,len(timevec)):
+    if sawvec[i-1]<amplitude:
+        sawvec.append(sawvec[i-1]+amplitude/(1000./(1000000./period)))
+    if sawvec[i-1]>=amplitude:
+        sawvec.append(0)
+        wavelengthchooser=np.random.choice([-1,0,1])
+        period=100000.+wavelengthchooser*20000.
+        amplitude=1.+np.random.normal(0,0.3)
+
+readvec=np.array(sawvec)
+freqvec=np.linspace(0,0.00005,51)
 #%% All
 #Make discrete fourier transform; t versie
 def Fouriert(f,vector,tvec,dt):
@@ -122,7 +140,7 @@ def Fouriert(f,vector,tvec,dt):
 def Fourier(f,vector,tvec,dt):
     summation=[]
     for i in range(0,len(vector)):
-        summation.append((vector[i])*np.exp(2.*np.pi*1j*f*i/len(vector)))
+        summation.append((vector[i])*np.exp(-2.*np.pi*1j*f*i/len(vector)))
     SUM=np.sum(summation)#/np.sqrt(timevec[(len(timevec)-1)])
     return np.abs(SUM)**2
     
