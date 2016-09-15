@@ -61,14 +61,14 @@ for i in range(1,len(timevec)):
 readvec=sawvec
 freqvec=np.linspace(0,0.00005,51)
 
-#Create saw tooth with 5 frequencies
-sinevec2=[]
-timevec=np.linspace(0, 1000000,1001)
-for i in timevec:
-    sinevec2.append(np.sin(i*2*np.pi/100000.)-0.5*np.sin(i*2*np.pi/100000.*2.)+0.25*np.sin(i*2*np.pi/100000.*3.)-0.125*np.sin(i*2*np.pi/100000.*4.))
-
-readvec=sinevec2
-freqvec=np.linspace(0,0.00005,51)
+##Create saw tooth with 5 frequencies
+#sinevec2=[]
+#timevec=np.linspace(0, 1000000,1001)
+#for i in timevec:
+#    sinevec2.append(np.sin(i*2*np.pi/100000.)-0.5*np.sin(i*2*np.pi/100000.*2.)+0.25*np.sin(i*2*np.pi/100000.*3.)-0.125*np.sin(i*2*np.pi/100000.*4.))
+#
+#readvec=sinevec2
+#freqvec=np.linspace(0,0.00005,51)
 
 
 #%% Exercise D
@@ -103,9 +103,9 @@ for i in range(1,len(timevec)):
         period=100000.+wavelengthchooser*20000.
 
 for i in range(0,len(sawvec)):
-    sawvec[i]=sawvec[i]+np.random.normal(0,1)
+    sawvec[i]=sawvec[i]+np.random.normal(0,0.5)
 
-readvec=np.array(sawvec)-np.array(sinevec)
+readvec=np.array(sawvec)
 freqvec=np.linspace(0,0.00005,51)
 
 #%% Exercise andere e
@@ -122,7 +122,7 @@ for i in range(1,len(timevec)):
         sawvec.append(0)
         wavelengthchooser=np.random.choice([-1,0,1])
         period=100000.+wavelengthchooser*20000.
-        amplitude=1.+np.random.normal(0,0.3)
+        amplitude=1.+np.random.normal(0,0.8)
 
 readvec=np.array(sawvec)
 freqvec=np.linspace(0,0.00005,51)
