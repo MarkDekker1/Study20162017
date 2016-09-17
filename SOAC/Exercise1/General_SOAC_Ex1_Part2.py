@@ -10,13 +10,13 @@ import csv
 import matplotlib.cm as cm
 
 #Read data
-f = open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'r')
+#f = open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'r')
 data=[]
 #for line in f:
 #    data.append(line)
 
-
-with open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'rt') as csvfile:
+#with open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'rt') as csvfile:
+with open('Data.csv','r'):
     spamreader = csv.reader(csvfile, delimiter=',')
     for line in spamreader:
         data.append(line)
