@@ -7,7 +7,7 @@ from numpy.linalg import inv
 matplotlib.style.use('ggplot')
 
 #Constants
-tmax=3600.*24.*20
+tmax=3600.*24.*2
 u0=0.
 v0=0.
 omega=7.2921*10**(-5)
@@ -28,7 +28,7 @@ dt=100
 
 Euextra=[]
 Evextra=[]
-dtvector=[10]
+dtvector=[1,10,100,1000]
 
 plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
 
@@ -64,15 +64,15 @@ for dt in dtvector:
     Eu=sum((np.array(uanalyt)-np.array(uvec))**2)
     Ev=sum((np.array(vanalyt)-np.array(vvec))**2)
     
-    Euvec=(np.array(uanalyt)-np.array(uvec))
-    Evvec=(np.array(vanalyt)-np.array(vvec))
+    Euvec=(np.array(uanalyt)-np.array(uvec))**2
+    Evvec=(np.array(vanalyt)-np.array(vvec))**2
     
     Euextra.append(Eu)
     Evextra.append(Ev)
     
-    plt.plot(tvec/3600.,Euvec,linewidth=2)
+    plt.semilogy(tvec/3600.,Evvec,linewidth=2)
     
-plt.ylabel('RSME of U',fontsize=15)
+plt.ylabel('Error in V',fontsize=15)
 plt.xlabel('Time [h]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend([r'$\Delta$t=1 s','$\Delta$t=10 s','$\Delta$t=100 s','$\Delta$t=1000 s'],loc=4)

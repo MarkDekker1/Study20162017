@@ -1,16 +1,16 @@
 import time
 start_time = time.time()
 
-Cmatrix_laxw=np.zeros(shape=(tmax/Dt,L/Dx))
+Cmatrix_laxw=np.zeros(shape=(np.int(tmax/Dt),np.int(L/Dx)))
 
 for j in range(0,J):
     Cmatrix_laxw[0,j]=C[j]
     
-for t in range(1,tmax/Dt):
-    for j in range(0,xmax/Dx):
-        if j!=xmax/Dx-1:
+for t in range(1,np.int(tmax/Dt)):
+    for j in range(0,np.int(xmax/Dx)):
+        if j!=np.int(xmax/Dx)-1:
             Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,j+1]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dt/2.*(Cmatrix_laxw[t-1,j+1]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dt
-        if j==xmax/Dx-1:
+        if j==np.int(xmax/Dx)-1:
             Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,0]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dt/2.*(Cmatrix_laxw[t-1,0]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dt
         
     

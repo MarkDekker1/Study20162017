@@ -1,13 +1,13 @@
 import time
 start_time = time.time()
 
-Cmatrix_euler=np.zeros(shape=(tmax/Dt,L/Dx))
+Cmatrix_euler=np.zeros(shape=(np.int(tmax/Dt),np.int(L/Dx)))
 
 for j in range(0,J):
     Cmatrix_euler[0,j]=C[j]
     
-for t in range(1,tmax/Dt):
-    for j in range(0,xmax/Dx):
+for t in range(1,np.int(tmax/Dt)):
+    for j in range(0,np.int(xmax/Dx)):
         Cmatrix_euler[t,j]=Cmatrix_euler[t-1,j]-u0*(Cmatrix_euler[t-1,j]-Cmatrix_euler[t-1,j-1])*Dt/Dx
             
 print("--- %s seconds ---" % (time.time() - start_time))

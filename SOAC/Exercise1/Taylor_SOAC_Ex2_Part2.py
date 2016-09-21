@@ -9,5 +9,3 @@ R=np.corrcoef(u_meas,u_mod)
 #Standard deviations
 sigma_meas=np.sqrt(np.var(u_meas))
 sigma_mod=np.sqrt(np.var(u_mod))
-
-#Error

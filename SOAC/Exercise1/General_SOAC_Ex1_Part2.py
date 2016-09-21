@@ -15,8 +15,8 @@ data=[]
 #for line in f:
 #    data.append(line)
 
-#with open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'rt') as csvfile:
-with open('Data.csv','r'):
+with open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'rt') as csvfile:
+#with open('Data.csv','r'):
     spamreader = csv.reader(csvfile, delimiter=',')
     for line in spamreader:
         data.append(line)
@@ -50,12 +50,18 @@ dpdyvec=dpdyvec/1000.
 dpdxmvec=dpdxmvec/1000.
 
 #%%Constants
+A=0.000815
+phi=-81.8
+lda=0.00022
+u0=-8.2
+v0=-2.7
+
 tmax=172800.
-u0=5.
-v0=3.
+u0=1.
+v0=1.
 dt=1
 omega=7.2921*10**(-5)
-lat=50.
+lat=52.46
 f=2*omega*np.sin(lat/360.*2.*np.pi)
 B=0.
 R = 	287.058 #gas constant
@@ -64,7 +70,7 @@ def rho(p,T): # p in hPa
 rhoc= 1.225#density at 288 K, sea level
 c1=-A*f/(rhoc*(f**2-omega**2))
 c2=0
-lda=0.0001
+#lda=0.00022
 
 
 #Vectors
@@ -83,7 +89,6 @@ vvec_nog[0]=v0
 uvec_all[0]=u0
 uvec_nol[0]=u0
 uvec_nog[0]=u0
-
 
 
 #%%Calculations
@@ -121,24 +126,54 @@ for t in range(0,np.int(tmax/dt)):
 Eu=sum((np.array(uanalyt)-np.array(uvec))**2)
 Ev=sum((np.array(vanalyt)-np.array(vvec))**2)
 #%%Plots
-plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(tvec,uvec_nog, 'r-',linewidth=2)
-plt.plot(tvec,uvec_nol, 'k-',linewidth=2)
-plt.plot(tvec,uvec_all, 'b-',linewidth=2)
-plt.plot(timevec,u0mvec, 'r--',linewidth=2)
+Eu=np.sum((uvec_all[0:172800:3600]-u0vec)**2)
+Ev=np.sum((vvec_all[0:172800:3600]-v0vec)**2)
+
+plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
+plt.plot(tvec/3600.,uvec_all, 'b-',linewidth=2)
+plt.plot(timevec/3600.,u0vec, 'r--',linewidth=2)
 plt.ylabel(r'U [ms$^{-1}$]',fontsize=15)
 plt.xlabel('Time [s]',fontsize=15)
-plt.xlim([82800,172800])
+plt.xlim([0,50])
 plt.tick_params(axis='both', which='major', labelsize=10)
-plt.legend(['No geostrophic, no friction','no friction', 'all','measurements'])
+plt.legend(['Simulated','Measured'],loc=4)
+#plt.annotate('RMSE is '+str(Eu), xy=(10, 4), xytext=(10, 4))
+plt.annotate('r is '+str(np.corrcoef(vvec_all[0:172800:3600],v0vec)[1][0]), xy=(10, 3), xytext=(10,3))
 
-plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(tvec,vvec_nog, 'r-',linewidth=2)
-plt.plot(tvec,vvec_nol, 'k-',linewidth=2)
-plt.plot(tvec,vvec_all, 'b-',linewidth=2)
-plt.plot(timevec,v0mvec, 'r--',linewidth=2)
+plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
+plt.plot(tvec/3600.,vvec_all, 'b-',linewidth=2)
+plt.plot(timevec/3600.,v0vec, 'r--',linewidth=2)
 plt.ylabel(r'V [ms$^{-1}$]',fontsize=15)
 plt.xlabel('Time [s]',fontsize=15)
-plt.xlim([82800,172800])
+plt.xlim([0,50])
 plt.tick_params(axis='both', which='major', labelsize=10)
-plt.legend(['No geostrophic, no friction','no friction', 'all','measurements'])
+plt.legend(['Simulated','Measured'])
+#plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))
+plt.annotate('r is '+str(np.corrcoef(uvec_all[0:172800:3600],u0vec)[1][0]), xy=(10, 7), xytext=(10, 7))
+
+#%% Means plots
+umean=(uvec_all[0:86400]+uvec_all[86400:172800])/2.
+vmean=(vvec_all[0:86400]+vvec_all[86400:172800])/2.
+
+Eu=np.sum((umean[0:86400:3600]-u0mvec[24:])**2)
+Ev=np.sum((vmean[0:86400:3600]-v0mvec[24:])**2)
+
+plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
+plt.plot(tvec[0:86400]/3600.,umean, 'b-',linewidth=2)
+plt.plot(hourvec[24:],u0mvec[24:], 'r--',linewidth=2)
+plt.ylabel(r'U [ms$^{-1}$]',fontsize=15)
+plt.xlabel('Time [s]',fontsize=15)
+plt.xlim([0,25])
+plt.tick_params(axis='both', which='major', labelsize=10)
+plt.legend(['Simulated','Measured'])
+plt.annotate('RMSE is '+str(Eu), xy=(10, 4), xytext=(10, 4))
+
+plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
+plt.plot(tvec[0:86400]/3600.,vmean, 'b-',linewidth=2)
+plt.plot(hourvec[24:],v0mvec[24:], 'r--',linewidth=2)
+plt.ylabel(r'V [ms$^{-1}$]',fontsize=15)
+plt.xlabel('Time [s]',fontsize=15)
+plt.xlim([0,25])
+plt.tick_params(axis='both', which='major', labelsize=10)
+plt.legend(['Simulated','Measured'])
+plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))

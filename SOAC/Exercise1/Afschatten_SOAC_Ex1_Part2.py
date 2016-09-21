@@ -19,12 +19,12 @@ for TryPhi in phivec:
     Epmatrix.append(Epvec)
 
 #%% Plot voor afschatten
-plt.figure(num=None, figsize=(10, 8), dpi=100, facecolor='w', edgecolor='k')
+plt.figure(num=None, figsize=(7, 4), dpi=100, facecolor='w', edgecolor='k')
 cs=plt.contourf(Avec,phivec,Epmatrix,200,cmap=cm.coolwarm)
 plt.contour(Avec,phivec,Epmatrix,25,linewidth=3.0,colors='k')
 cbar = plt.colorbar(cs)
-plt.ylabel('Phi [deg]',fontsize=15)
-plt.xlabel(r'A [hPa m$^{-1}$]',fontsize=15)
+plt.ylabel(r'$\phi$ [deg]',fontsize=15)
+plt.xlabel(r'A [Pa m$^{-1}$]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=10)
 
 
@@ -36,18 +36,18 @@ phiindex=np.where(Epmatrix==np.min(Epmatrix))[0]
 A=Avec[Aindex]
 phi=phivec[phiindex]
 
-pgradx=[]
+pgradx=np.zeros(86400)
 for t in range(0,86400):
-    pgradx.append(A*np.cos(omega*t+phi/360.*2.*np.pi))
+    pgradx[t]=A*np.cos(omega*t+phi/360.*2.*np.pi)
 
-plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
+plt.figure(num=None, figsize=(7,4),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(tvec,pgradx, 'b-',linewidth=2)
 plt.plot(timevec[:24],dpdxmvec[24:], 'ro',linewidth=2)
-plt.ylabel(r'$\frac{\partial p}{\partial x}$ [hPa m$^{-1}$]',fontsize=15)
+plt.ylabel(r'$\frac{\partial p}{\partial x}$ [Pa m$^{-1}$]',fontsize=15)
 plt.xlabel('Time [s]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=10)
 
-
+r=np.corrcoef(np.array(pgradx[0:86400:3600]),dpdxmvec[24:])[1][0]
 #%%Afschatten M, theta
 tvec=[]
 for t in range(0,172800):

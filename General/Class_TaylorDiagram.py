@@ -110,9 +110,9 @@ if __name__=='__main__':
 
     import matplotlib.pyplot as PLT
 
-    u_meas=u0mvec[24:]
-    u_mod=umean[0:86400:3600]
-    time_end=hourvec[:24]
+    u_meas=v0vec
+    u_mod=vvec_all[0:172800:3600]
+    time_end=timevec/3600.
     
     x = time_end
     data = u_meas                           # Data
@@ -121,14 +121,14 @@ if __name__=='__main__':
     dia = TaylorDiagram(data)
     
     fig = PLT.figure(figsize=(10,4))
-    ax1 = fig.add_subplot(1,2,1, xlabel='X', ylabel='Y')
+    #ax1 = fig.add_subplot(1,2,1, xlabel='X', ylabel='Y')
     ax2 = dia.setup_axes(fig, 122)
 
-    ax1.plot(x,data,'ko', label='Data')
-    ax1.plot(x,m1,'b-', label='Model 1')
+    #ax1.plot(x,data,'ko', label='Data')
+    #ax1.plot(x,m1,'b-', label='Model 1')
 
     dia.plot_sample(m1, 'bo')
     
-    ax1.legend(numpoints=1, prop=dict(size='small'), loc='best')
+    #ax1.legend(numpoints=1, prop=dict(size='small'), loc='best')
 
     PLT.show()
