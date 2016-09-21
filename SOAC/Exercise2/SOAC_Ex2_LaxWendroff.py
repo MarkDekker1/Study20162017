@@ -1,30 +1,39 @@
 import time
 start_time = time.time()
 
-Cmatrix_laxw=np.zeros(shape=(np.int(tmax/Dt),np.int(L/Dx)))
+plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
+plt.plot(xvec,Cmatrix_laxw[0], 'r-',linewidth=2)
 
-for j in range(0,J):
-    Cmatrix_laxw[0,j]=C[j]
-    
-for t in range(1,np.int(tmax/Dt)):
-    for j in range(0,np.int(xmax/Dx)):
-        if j!=np.int(xmax/Dx)-1:
-            Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,j+1]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dt/2.*(Cmatrix_laxw[t-1,j+1]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dt
-        if j==np.int(xmax/Dx)-1:
-            Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,0]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dt/2.*(Cmatrix_laxw[t-1,0]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dt
+
+for Dz in [10,100,1000]:
+    Cmatrix_laxw=np.zeros(shape=(np.int(tmax/Dz),np.int(L/Dx)))
         
+
+    for j in range(0,J):
+        Cmatrix_laxw[0,j]=C[j]
+        
+    for t in range(1,np.int(tmax/Dz)):
+        for j in range(0,np.int(xmax/Dx)):
+            if j!=np.int(xmax/Dx)-1:
+                Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,j+1]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dz/2.*(Cmatrix_laxw[t-1,j+1]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dz
+            if j==np.int(xmax/Dx)-1:
+                Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,0]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dz/2.*(Cmatrix_laxw[t-1,0]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dz
+        
+    if Dz==10:
+        plt.plot(xvec,Cmatrix_laxw[np.int(tmax/Dz)-1], 'k-',linewidth=2)
+    if Dz==100:
+        plt.plot(xvec,Cmatrix_laxw[np.int(tmax/Dz)-1], 'g-',linewidth=2)
+    if Dz==1000:
+        plt.plot(xvec,Cmatrix_laxw[np.int(tmax/Dz)-1], 'b-',linewidth=2)
     
             
 print("--- %s seconds ---" % (time.time() - start_time))
 
-plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(xvec,Cmatrix_laxw[0], 'r-',linewidth=2)
-plt.plot(xvec,Cmatrix_laxw[tmax/Dt-1], 'k-',linewidth=2)
 plt.ylabel(r'Concentration',fontsize=15)
 plt.xlabel('Distance [m]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.ylim([-0.2,1.2])
-plt.legend(['Before', 'After'])
+plt.legend(['Start', r'$\Delta$t=10', r'$\Delta$t=100', r'$\Delta$t=1000'])
 
 #%% Animation
 from matplotlib import animation
