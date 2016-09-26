@@ -2,12 +2,12 @@ import time
 start_time = time.time()
 
 plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(xvec,Cmatrix_euler[0], 'r-',linewidth=2)
 
-for Dz in [10,100,1000]:
+for Dz in [1,10,100,1000]:
         
     
     Cmatrix_euler=np.zeros(shape=(np.int(tmax/Dz),np.int(L/Dx)))
+    plt.plot(xvec,Cmatrix_euler[0], 'r-',linewidth=2)
     
     for j in range(0,J):
         Cmatrix_euler[0,j]=C[j]
