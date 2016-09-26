@@ -1,11 +1,15 @@
 import time
 start_time = time.time()
 
+Cmatrix_laxw=np.zeros(shape=(2,np.int(L/Dx)))
+for j in range(0,J):
+    Cmatrix_laxw[0,j]=C[j]
+    
 plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(xvec,Cmatrix_laxw[0], 'r-',linewidth=2)
 
 
-for Dz in [10,100,1000]:
+for Dz in [1000]:
     Cmatrix_laxw=np.zeros(shape=(np.int(tmax/Dz),np.int(L/Dx)))
         
 
@@ -19,6 +23,8 @@ for Dz in [10,100,1000]:
             if j==np.int(xmax/Dx)-1:
                 Cmatrix_laxw[t,j]=Cmatrix_laxw[t-1,j]+(-u0*(Cmatrix_laxw[t-1,0]-Cmatrix_laxw[t-1,j-1])/(2*Dx)+u0**2.*Dz/2.*(Cmatrix_laxw[t-1,0]-2.*Cmatrix_laxw[t-1,j]+Cmatrix_laxw[t-1,j-1])/(Dx**2))*Dz
         
+    if Dz==1:
+        plt.plot(xvec,Cmatrix_laxw[np.int(tmax/Dz)-1], 'm-',linewidth=2)
     if Dz==10:
         plt.plot(xvec,Cmatrix_laxw[np.int(tmax/Dz)-1], 'k-',linewidth=2)
     if Dz==100:
@@ -33,7 +39,7 @@ plt.ylabel(r'Concentration',fontsize=15)
 plt.xlabel('Distance [m]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.ylim([-0.2,1.2])
-plt.legend(['Start', r'$\Delta$t=10', r'$\Delta$t=100', r'$\Delta$t=1000'])
+plt.legend(['Start', r'$\Delta$t=1', r'$\Delta$t=10', r'$\Delta$t=100', r'$\Delta$t=1000'])
 
 #%% Animation
 from matplotlib import animation
@@ -57,7 +63,7 @@ def animate(i):
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
 anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=25000, interval=0.01, blit=True)
+                               frames=1000, interval=50, blit=True)
 
 #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
