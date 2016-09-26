@@ -15,11 +15,16 @@ data=[]
 #for line in f:
 #    data.append(line)
 
-with open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'rt') as csvfile:
-#with open('Data.csv','r'):
-    spamreader = csv.reader(csvfile, delimiter=',')
-    for line in spamreader:
-        data.append(line)
+#with open(r'C:\Users\Mark Dekker\Documents\Study20162017\SOAC\Exercise1\Data.csv', 'rt') as csvfile:
+#with open(r'Data.csv','rt'):
+#    spamreader = csv.reader(csvfile, delimiter=',')
+#    for line in spamreader:
+#        data.append(line)
+
+file1 = open(r'Data.csv', 'rt')
+spamreader = csv.reader(file1, delimiter=',')
+for line in spamreader:
+    data.append(line)
 
 timevec=np.zeros(len(data))
 dayvec=np.zeros(len(data))
@@ -56,9 +61,13 @@ lda=0.00022
 u0=-8.2
 v0=-2.7
 
+#A=-0.000798
+#phi=97
+#lda=0.0002
+#u0=-7.8
+#v0=-2.0
+
 tmax=172800.
-u0=1.
-v0=1.
 dt=1
 omega=7.2921*10**(-5)
 lat=52.46
@@ -90,25 +99,34 @@ uvec_all[0]=u0
 uvec_nol[0]=u0
 uvec_nog[0]=u0
 
+#%%Stepfunction dpdy
+pgrady=[]
+pgradx=[]
+for t in range(0,np.int(tmax/dt)):
+    take=np.mean(dpdyvec)#dpdyvec[np.int(t/3600.)]
+    pgrady.append(take)
+    take=A*np.cos(omega*t+phi/360.*2.*np.pi)#dpdxvec[np.int(t/3600.)]
+    pgradx.append(take)
+
 
 #%%Calculations
 
 tvec=np.zeros(np.int(tmax/dt))
 for t in range(1,np.int(tmax/dt)):
-    pgrady=0#M*np.cos(omega*t+theta/360.*2.*np.pi)
-    pgradx=A*np.cos(omega*t+phi/360.*2.*np.pi)+B
+    pgrady0=pgrady[t]#M*np.cos(omega*t+theta/360.*2.*np.pi)
+    pgradx0=pgradx[t]#A*np.cos(omega*t+phi/360.*2.*np.pi)+B
     
-    vg=1/(rhoc*f)*pgradx
-    ug=-1./(rhoc*f)*pgrady
+    vg=1/(rhoc*f)*pgradx0
+    ug=-1./(rhoc*f)*pgrady0
     
-    vvec_nog[t]=vvec_nog[t-1]+(-f*(uvec_nog[t-1]-0))*dt
-    uvec_nog[t]=uvec_nog[t-1]+(f*(vvec_nog[t]-0)-pgradx/rhoc)*dt
+    #vvec_nog[t]=vvec_nog[t-1]+(-f*(uvec_nog[t-1]-0))*dt
+    #uvec_nog[t]=uvec_nog[t-1]+(f*(vvec_nog[t]-0)-pgradx/rhoc)*dt
     
-    vvec_nol[t]=vvec_nol[t-1]+(-f*(uvec_nol[t-1]-ug))*dt
-    uvec_nol[t]=uvec_nol[t-1]+(f*(vvec_nol[t]-vg)-pgradx/rhoc)*dt
+    #vvec_nol[t]=vvec_nol[t-1]+(-f*(uvec_nol[t-1]-ug))*dt
+    #uvec_nol[t]=uvec_nol[t-1]+(f*(vvec_nol[t]-vg)-pgradx/rhoc)*dt
     
     vvec_all[t]=vvec_all[t-1]+(-f*(uvec_all[t-1]-ug)-lda*vvec_all[t-1])*dt
-    uvec_all[t]=uvec_all[t-1]+(f*(vvec_all[t]-vg)-pgradx/rhoc-lda*uvec_all[t-1])*dt
+    uvec_all[t]=uvec_all[t-1]+(f*(vvec_all[t]-vg)-A*np.cos(omega*t+phi/360.*2.*np.pi)/rhoc-lda*uvec_all[t-1])*dt
     tvec[t]=t
    
 
@@ -138,7 +156,7 @@ plt.xlim([0,50])
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend(['Simulated','Measured'],loc=4)
 #plt.annotate('RMSE is '+str(Eu), xy=(10, 4), xytext=(10, 4))
-plt.annotate('r is '+str(np.corrcoef(vvec_all[0:172800:3600],v0vec)[1][0]), xy=(10, 3), xytext=(10,3))
+plt.annotate('r is '+str(np.corrcoef(uvec_all[0:172800:3600],u0vec)[1][0]), xy=(10, 3), xytext=(10,3))
 
 plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(tvec/3600.,vvec_all, 'b-',linewidth=2)
@@ -149,7 +167,7 @@ plt.xlim([0,50])
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend(['Simulated','Measured'])
 #plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))
-plt.annotate('r is '+str(np.corrcoef(uvec_all[0:172800:3600],u0vec)[1][0]), xy=(10, 7), xytext=(10, 7))
+plt.annotate('r is '+str(np.corrcoef(vvec_all[0:172800:3600],v0vec)[1][0]), xy=(10, 7), xytext=(10, 7))
 
 #%% Means plots
 umean=(uvec_all[0:86400]+uvec_all[86400:172800])/2.
@@ -177,3 +195,7 @@ plt.xlim([0,25])
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend(['Simulated','Measured'])
 plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))
+
+#%%
+U_lda25=uvec_all
+V_lda25=vvec_all
