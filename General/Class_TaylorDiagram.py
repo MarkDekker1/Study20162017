@@ -110,25 +110,45 @@ if __name__=='__main__':
 
     import matplotlib.pyplot as PLT
 
-    u_meas=v0vec
-    u_mod=vvec_all[0:172800:3600]
+    v_meas=v0vec
     time_end=timevec/3600.
     
     x = time_end
-    data = u_meas                           # Data
-    m1 = u_mod    # Model 1
+    data = v_meas
 
     dia = TaylorDiagram(data)
     
     fig = PLT.figure(figsize=(10,4))
     #ax1 = fig.add_subplot(1,2,1, xlabel='X', ylabel='Y')
-    ax2 = dia.setup_axes(fig, 122)
-
+    ax2 = dia.setup_axes(fig, 111)
+    ldavec=[0.00015,0.0002,0.00022, 0.0003, 0.0005, 0.001,0.01,0.1]
+    #ldavec=[0.001,0.002]
     #ax1.plot(x,data,'ko', label='Data')
     #ax1.plot(x,m1,'b-', label='Model 1')
+    colors=np.linspace(0,100,len(ldavec))
+    colormap = PLT.cm.jet
+    PLT.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(ldavec))])
+    legendEntries=[]
+    legendText=[]
+    for i in range(0,len(colors)):
+        lda=ldavec[i]
+        for t in range(1,np.int(tmax/dt)):
+            pgrady0=pgrady[t]#M*np.cos(omega*t+theta/360.*2.*np.pi)
+            pgradx0=pgradx[t]#A*np.cos(omega*t+phi/360.*2.*np.pi)+B
+            
+            vg=1/(rhoc*f)*pgradx0
+            ug=-1./(rhoc*f)*pgrady0
+            
+            vvec_all[t]=vvec_all[t-1]+(-f*(uvec_all[t-1]-ug)-lda*vvec_all[t-1])*dt
+            uvec_all[t]=uvec_all[t-1]+(f*(vvec_all[t]-vg)-A*np.cos(omega*t+phi/360.*2.*np.pi)/rhoc-lda*uvec_all[t-1])*dt
 
-    dia.plot_sample(m1, 'bo')
+        m1=vvec_all[0:172800:3600]
+        plotje=dia.plot_sample(m1, 'o',markersize=15)
+        legendEntries.append(plotje)
+        legendText.append(np.str(ldavec[i]))
     
-    #ax1.legend(numpoints=1, prop=dict(size='small'), loc='best')
+    #lgd = PLT.legend(legendEntries,legendText,numpoints=1,loc='upper right') # example of how to draw the legend     
+    
+    #PLT.legend(['','','0.0001','0.0002','0.00022','0.0003','0.0005','0.001','0.01','0.1'], loc='best')
 
     PLT.show()

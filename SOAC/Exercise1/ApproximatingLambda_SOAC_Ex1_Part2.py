@@ -1,6 +1,4 @@
 #%%Afschatten lambda
-v0=1.
-u0=1.
 
 tvec=[]
 for t in range(0,np.int(tmax/dt)):
@@ -13,7 +11,7 @@ Euvec=[]
 Evvec=[]
 ruvec=[]
 rvvec=[]
-for TryLambda in lambdavec:
+for TryLambda in [0.0001]:
     pgradx=[]
     tvec=np.zeros(np.int(tmax/dt))
     vvec_all=np.zeros(np.int(tmax/dt))
@@ -22,11 +20,11 @@ for TryLambda in lambdavec:
     uvec_all[0]=u0
     for t in range(1,np.int(tmax/dt)):
         
-        pgrady=0#M*np.cos(omega*t+theta/360.*2.*np.pi)
+        pgrady0=np.mean(dpdyvec)#M*np.cos(omega*t+theta/360.*2.*np.pi)
         pgradx=A*np.cos(omega*t+phi/360.*2.*np.pi)+B
         
         vg=1/(rhoc*f)*pgradx
-        ug=-1./(rhoc*f)*pgrady
+        ug=-1./(rhoc*f)*pgrady0
     
         vvec_all[t]=vvec_all[t-1]+(-f*(uvec_all[t-1]-ug)-TryLambda*vvec_all[t-1])*dt
         uvec_all[t]=uvec_all[t-1]+(f*(vvec_all[t]-vg)-pgradx/rhoc-TryLambda*uvec_all[t-1])*dt
