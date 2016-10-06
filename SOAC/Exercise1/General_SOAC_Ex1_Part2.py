@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import statsmodels.tsa.stattools as stat
 import matplotlib
 from numpy.linalg import inv
-#matplotlib.style.use('ggplot')
+matplotlib.style.use('ggplot')
 import csv
+import os
 
 import matplotlib.cm as cm
 
@@ -21,7 +22,7 @@ data=[]
 #    for line in spamreader:
 #        data.append(line)
 
-file1 = open(r'Data.csv', 'rt')
+file1 = open('C:\Users\Mark\Documents\Studie\Study20162017\SOAC\Exercise1\Data2.csv', 'rt')
 spamreader = csv.reader(file1, delimiter=',')
 for line in spamreader:
     data.append(line)
@@ -60,6 +61,13 @@ phi=-81.8
 lda=0.00022
 u0=-8.2
 v0=-2.7
+
+
+A=0.000815
+phi=-81.8
+lda=0.00027
+u0=-9.3
+v0=-7.5
 
 #A=-0.000798
 #phi=97
@@ -151,23 +159,23 @@ plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(tvec/3600.,uvec_all, 'b-',linewidth=2)
 plt.plot(timevec/3600.,u0vec, 'r--',linewidth=2)
 plt.ylabel(r'U [ms$^{-1}$]',fontsize=15)
-plt.xlabel('Time [s]',fontsize=15)
+plt.xlabel('Time [h]',fontsize=15)
 plt.xlim([0,50])
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend(['Simulated','Measured'],loc=4)
 #plt.annotate('RMSE is '+str(Eu), xy=(10, 4), xytext=(10, 4))
-plt.annotate('r is '+str(np.corrcoef(uvec_all[0:172800:3600],u0vec)[1][0]), xy=(10, 3), xytext=(10,3))
+#plt.annotate('r is '+str(np.corrcoef(uvec_all[0:172800:3600],u0vec)[1][0]), xy=(10, 3), xytext=(10,3))
 
 plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(tvec/3600.,vvec_all, 'b-',linewidth=2)
 plt.plot(timevec/3600.,v0vec, 'r--',linewidth=2)
 plt.ylabel(r'V [ms$^{-1}$]',fontsize=15)
-plt.xlabel('Time [s]',fontsize=15)
+plt.xlabel('Time [h]',fontsize=15)
 plt.xlim([0,50])
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend(['Simulated','Measured'])
 #plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))
-plt.annotate('r is '+str(np.corrcoef(vvec_all[0:172800:3600],v0vec)[1][0]), xy=(10, 7), xytext=(10, 7))
+#plt.annotate('r is '+str(np.corrcoef(vvec_all[0:172800:3600],v0vec)[1][0]), xy=(10, 4), xytext=(10, 4))
 
 #%% Means plots
 umean=(uvec_all[0:86400]+uvec_all[86400:172800])/2.
@@ -176,25 +184,29 @@ vmean=(vvec_all[0:86400]+vvec_all[86400:172800])/2.
 Eu=np.sum((umean[0:86400:3600]-u0mvec[24:])**2)
 Ev=np.sum((vmean[0:86400:3600]-v0mvec[24:])**2)
 
-plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
+plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(tvec[0:86400]/3600.,umean, 'b-',linewidth=2)
 plt.plot(hourvec[24:],u0mvec[24:], 'r--',linewidth=2)
 plt.ylabel(r'U [ms$^{-1}$]',fontsize=15)
-plt.xlabel('Time [s]',fontsize=15)
+plt.xlabel('Time [h]',fontsize=15)
 plt.xlim([0,25])
 plt.tick_params(axis='both', which='major', labelsize=10)
-plt.legend(['Simulated','Measured'])
-plt.annotate('RMSE is '+str(Eu), xy=(10, 4), xytext=(10, 4))
+plt.legend(['Simulated','Measured'],loc='best')
+#plt.annotate('RMSE is '+str(Eu), xy=(10, 4), xytext=(10, 4))
+#plt.annotate('r is '+str(np.corrcoef(umean[0:86400:3600],u0mvec[24:])[1][0]), xy=(10, 2), xytext=(10, 2))
 
-plt.figure(num=None, figsize=(10,7),dpi=150, facecolor='w', edgecolor='k')
+
+plt.figure(num=None, figsize=(7,3),dpi=150, facecolor='w', edgecolor='k')
 plt.plot(tvec[0:86400]/3600.,vmean, 'b-',linewidth=2)
 plt.plot(hourvec[24:],v0mvec[24:], 'r--',linewidth=2)
 plt.ylabel(r'V [ms$^{-1}$]',fontsize=15)
-plt.xlabel('Time [s]',fontsize=15)
+plt.xlabel('Time [h]',fontsize=15)
 plt.xlim([0,25])
 plt.tick_params(axis='both', which='major', labelsize=10)
 plt.legend(['Simulated','Measured'])
-plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))
+#plt.annotate('RMSE is '+str(Ev), xy=(10, 8), xytext=(10, 8))
+#plt.annotate('r is '+str(np.corrcoef(vmean[0:86400:3600],v0mvec[24:])[1][0]), xy=(10, 4), xytext=(10, 4))
+
 
 #%%
 U_lda25=uvec_all

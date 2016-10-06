@@ -110,7 +110,7 @@ if __name__=='__main__':
 
     import matplotlib.pyplot as PLT
 
-    v_meas=v0vec
+    v_meas=u0vec
     time_end=timevec/3600.
     
     x = time_end
@@ -121,7 +121,7 @@ if __name__=='__main__':
     fig = PLT.figure(figsize=(10,4))
     #ax1 = fig.add_subplot(1,2,1, xlabel='X', ylabel='Y')
     ax2 = dia.setup_axes(fig, 111)
-    ldavec=[0.00015,0.0002,0.00022, 0.0003, 0.0005, 0.001,0.01,0.1]
+    ldavec=[0.00015,0.0002,0.00027, 0.0003, 0.0005, 0.001,0.01,0.1]
     #ldavec=[0.001,0.002]
     #ax1.plot(x,data,'ko', label='Data')
     #ax1.plot(x,m1,'b-', label='Model 1')
@@ -130,8 +130,20 @@ if __name__=='__main__':
     PLT.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(ldavec))])
     legendEntries=[]
     legendText=[]
+    
+    A=0.000815
+    phi=-81.8
+    lda=0.00027
+    u0=-9.3
+    v0=-7.5
+    
+    
     for i in range(0,len(colors)):
         lda=ldavec[i]
+        vvec_all=np.zeros(np.int(tmax/dt))
+        uvec_all=np.zeros(np.int(tmax/dt))
+        uvec_all[0]=u0
+        vvec_all[0]=v0
         for t in range(1,np.int(tmax/dt)):
             pgrady0=pgrady[t]#M*np.cos(omega*t+theta/360.*2.*np.pi)
             pgradx0=pgradx[t]#A*np.cos(omega*t+phi/360.*2.*np.pi)+B
@@ -142,13 +154,13 @@ if __name__=='__main__':
             vvec_all[t]=vvec_all[t-1]+(-f*(uvec_all[t-1]-ug)-lda*vvec_all[t-1])*dt
             uvec_all[t]=uvec_all[t-1]+(f*(vvec_all[t]-vg)-A*np.cos(omega*t+phi/360.*2.*np.pi)/rhoc-lda*uvec_all[t-1])*dt
 
-        m1=vvec_all[0:172800:3600]
+        m1=uvec_all[0:172800:3600]
         plotje=dia.plot_sample(m1, 'o',markersize=15)
         legendEntries.append(plotje)
         legendText.append(np.str(ldavec[i]))
     
     #lgd = PLT.legend(legendEntries,legendText,numpoints=1,loc='upper right') # example of how to draw the legend     
     
-    #PLT.legend(['','','0.0001','0.0002','0.00022','0.0003','0.0005','0.001','0.01','0.1'], loc='best')
+    PLT.legend(['','','0.0001','0.0002','0.00027','0.0003','0.0005','0.001','0.01','0.1'], loc='best')
 
     PLT.show()
