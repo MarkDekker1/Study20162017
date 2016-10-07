@@ -77,11 +77,12 @@ def ReadinCTDData(filename, directory =''):
     				dens_c.append(float(line[6]))
     				time_c.append(float(line[7]))
     				fluor_c.append(float(line[8]))
+    				day_c.append(float(day))
     				hour_c.append(float(hour))
     				minute_c.append(float(minute))
     				seconds_c.append(float(seconds))
     			
-    			return np.asarray(temp_c), np.asarray(theta_c), np.asarray(cond_c), np.asarray(pres_c), np.asarray(depth_c), np.asarray(salt_c), np.asarray(dens_c), np.asarray(time_c), np.asarray(fluor_c), date, lon, lat,np.asarray(hour_c),np.asarray(minute_c),np.asarray(seconds_c)
+    			return np.asarray(temp_c), np.asarray(theta_c), np.asarray(cond_c), np.asarray(pres_c), np.asarray(depth_c), np.asarray(salt_c), np.asarray(dens_c), np.asarray(time_c), np.asarray(fluor_c), date, lon, lat,np.asarray(hour_c),np.asarray(minute_c),np.asarray(seconds_c),np.asarray(day_c)
 
 
 # ------------------------------------------------------
