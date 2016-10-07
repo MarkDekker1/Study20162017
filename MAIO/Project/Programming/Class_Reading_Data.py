@@ -36,6 +36,7 @@ def ReadinCTDData(filename, directory =''):
     	hour_c		= [] #Density - 1000.0 (kg/m^3)
     	minute_c		= [] #time (sec)
     	seconds_c      	= [] #Fluorescence (ug/L)
+    	day_c =[]
     
     	for line_i in range(len(lines)):
     
@@ -222,7 +223,7 @@ class ReadData(object):
         directory_CTD = 'C:\Users\Mark\Documents\Studie\MAIO_zip\MAIO/CTD_1m/'
         CTD_files = glob.glob(directory_CTD+'*')
         
-        self.temp, self.theta, self.cond, self.pres, self.depth, self.salt, self.dens, self.time, self.fluor, self.date, self.lon, self.lat,self.hour,self.minute,self.second= ReadinCTDData(CTD_files[which_CTD])
+        self.temp, self.theta, self.cond, self.pres, self.depth, self.salt, self.dens, self.time, self.fluor, self.date, self.lon, self.lat,self.hour,self.minute,self.second, self.day= ReadinCTDData(CTD_files[which_CTD])
         
 # ------------------------------------------------------
 # Retriever of Station locations

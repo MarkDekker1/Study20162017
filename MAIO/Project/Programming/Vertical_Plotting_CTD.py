@@ -4,19 +4,23 @@
 
 from scipy import interpolate
 which_depth=10 #meters
-which_SCAMP_vec=np.arange(54,60+1,1)
+#which_CTD_vec=np.arange(15,22+1,1)
+#which_CTD_vec=[1,2,3,4,5,6,7,8]
+which_CTD_vec=np.arange(53,60+1,1)
 Depth_matrix=[]
 Temp_matrix=[]
-Lat_vec_s=[]
-Lon_vec_s=[]
-Depth_vec=np.arange(0,50,1)
+Lat_vec_c=[]
+Lon_vec_c=[]
+#Depth_vec=np.arange(0,50,1)
+#Depth_vec=np.arange(0,50,1)
+Depth_vec=np.arange(0,400,1)
 
 # ------------------------------------------------------
 # Start iteration
 # ------------------------------------------------------
-for number in range(0,len(which_SCAMP_vec)):
-    which_SCAMP=which_SCAMP_vec[number]
-    which_CTD=1
+for number in range(0,len(which_CTD_vec)):
+    which_CTD=which_CTD_vec[number]
+    which_SCAMP=1
 
 # ------------------------------------------------------
 # Defining parameters
@@ -32,19 +36,19 @@ for number in range(0,len(which_SCAMP_vec)):
 # Get data
 # ------------------------------------------------------
 
-    data_s=ReadData(Parameter_initial,comparison=To_compare,initialvalue=0)
-    data_s.GetScampData()
+    data_c=ReadData(Parameter_initial,comparison=To_compare,initialvalue=0)
+    data_c.GetCTDData()
     
 # ------------------------------------------------------
 # Save relevant data at every iteration
 # ------------------------------------------------------
     
-    Lon_vec_s.append(data_s.lon)
-    Lat_vec_s.append(data_s.lat)
+    Lon_vec_c.append(data_c.lon)
+    Lat_vec_c.append(data_c.lat)
     
     
-    z = data_s.depth
-    T = data_s.temp_acc
+    z = data_c.depth
+    T = data_c.temp
     f = interpolate.interp1d(z,T)    
     
     zmin = np.int(np.min(z))
@@ -67,47 +71,11 @@ for number in range(0,len(which_SCAMP_vec)):
 
 #%%
 # ------------------------------------------------------
-# Process double measurements at one location in case 11-16
+# Process stations CTD
 # ------------------------------------------------------
 
-#We know that 1,2 and 5,6 are at the same location: take nanmean
-Temp_matrix2=[]
-for i in range(0,len(which_SCAMP_vec)):
-    matrix=[]
-    if i==1:
-        for j in range(0,len(Temp_matrix[1])):
-            matrix.append(np.nanmean([Temp_matrix[1][j],Temp_matrix[2][j]]))
-        Temp_matrix2.append(matrix)
-    if i==0 or i==3 or i==4 or i==7:
-        matrix=Temp_matrix[i]
-        Temp_matrix2.append(matrix)
-    if i==5:
-        for j in range(0,len(Temp_matrix[5])):
-            matrix.append(np.nanmean([Temp_matrix[5][j],Temp_matrix[6][j]]))
-        Temp_matrix2.append(matrix)
-        
-Station_vec=[11,12,12.5,13,14,15,15.5,16]
+Station_vec=which_CTD_vec
 
-#%%
-# ------------------------------------------------------
-# Process double measurements at one location in case 21-25
-# ------------------------------------------------------
-
-#We know that 2,3 are at the same location: take nanmean
-Temp_matrix2=[]
-for i in range(0,len(which_SCAMP_vec)):
-    matrix=[]
-    if i==3:
-        for j in range(0,len(Temp_matrix[1])):
-            matrix.append(np.nanmean([Temp_matrix[2][j],Temp_matrix[3][j]]))
-        Temp_matrix2.append(matrix)
-    if i==0 or i==1 or i==4 or i==5:
-        matrix=Temp_matrix[i]
-        Temp_matrix2.append(matrix)
-        
-Station_vec=[21,22,23,23.5,24,25]
-
-#%%
 # ------------------------------------------------------
 # Get Bathymetry at locations
 # ------------------------------------------------------
@@ -118,31 +86,30 @@ Lat_bath=data.Lat_bath
 Lon_bath=data.Lon_bath
 Depth=data.Depth
 
-#%%
 Bath=[]
 Distance=0.005
 commons_lon=[]
-for i in range(0,len(Lon_vec_s)):
-    more=where(Lon_bath>=Lon_vec_s[i]-Distance)
-    less=where(Lon_bath<=Lon_vec_s[i]+Distance)
+for i in range(0,len(Lon_vec_c)):
+    more=where(Lon_bath>=Lon_vec_c[i]-Distance)
+    less=where(Lon_bath<=Lon_vec_c[i]+Distance)
     commons_lon.append(np.intersect1d(more,less)[0])
     
 commons_lat=[]
-for j in range(0,len(Lat_vec_s)):
-    more=where(Lat_bath>=Lat_vec_s[j]-Distance)
-    less=where(Lat_bath<=Lat_vec_s[j]+Distance)
+for j in range(0,len(Lat_vec_c)):
+    more=where(Lat_bath>=Lat_vec_c[j]-Distance)
+    less=where(Lat_bath<=Lat_vec_c[j]+Distance)
     commons_lat.append(np.intersect1d(more,less)[0])
 
 stations_depth=[]
-for i in range(0,len(Lat_vec_s)):
+for i in range(0,len(Lat_vec_c)):
     stations_depth.append(Depth[commons_lat[i],commons_lon[i]])
 
-stations_unique=[]    
-for i in range(0,6):
-    if i!=3:
-        stations_unique.append(stations_depth[i])
+#vmin=27
+#for i in range(0,len(Temp_matrix)):
+#    for j in range(0,len(Temp_matrix)):
+#        if Temp_matrix[i][j]<vmin:
+#            Temp_matrix[i][j]='nan'
     
-#%%
 # ------------------------------------------------------
 # Plot temperatures of CTD vertically
 # ------------------------------------------------------
@@ -154,10 +121,13 @@ import matplotlib.colors as colors
 
 plt.figure(figsize=(10,5))
 c=plt.contourf(Station_vec,-Depth_vec[2:],np.transpose(Temp_matrix)[2:],100)
-plt.plot(np.arange(21,26,1),stations_unique)
-plt.ylim([-50,-2])
+c2=plt.contour(Station_vec,-Depth_vec[2:],np.transpose(Temp_matrix)[2:],25,zorder=15,colors='k')
+plt.plot(Station_vec,stations_depth,'k',linewidth=2,zorder=50)
+plt.fill_between(Station_vec, -10000, stations_depth, facecolor='saddlebrown',zorder=50)
+plt.ylim([-np.max(Depth_vec),-2])
 plt.colorbar(c)
+#plt.clim([27,30])
 plt.ylabel('Depth [m]',fontsize=15)
 plt.xlabel('Station Number',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
-plt.legend(['Depth'],loc='lower left')
+plt.legend(['Bottom'],loc='lower left')

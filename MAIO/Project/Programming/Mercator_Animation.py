@@ -16,6 +16,7 @@ from mpl_toolkits.basemap import Basemap
 # ------------------------------------------------------
 # Read data
 # ------------------------------------------------------
+
 file='C:\Users\Mark\Documents\Studie\Data\MAIO_Project/Mercator_2h_august_18_september_7.nc'
 DataSet = netcdf.Dataset(file, mode='r')
 
