@@ -12,6 +12,7 @@ import netCDF4 as netcdf
 from copy import copy
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
+import matplotlib.colors as colors
 
 # ------------------------------------------------------
 # Read data
@@ -128,7 +129,7 @@ time_text = plt.text(-64,17.5, '', zorder=10)
 x2,y2=meshgrid(lon2,lat2)
 xx,yy=m(x2,y2)
 
-Quivers=m.quiver(xx,yy,U,V,units='inches',scale=0.6,pivot='tip',width=0.015,zorder=15)
+Quivers=m.quiver(xx,yy,U,V,units='inches',scale=0.6,width=0.015,zorder=15)#,pivot='tip')
 qk = plt.quiverkey(Quivers, 0.5, 1.03, 0.5, r'$0.5 \frac{m}{s}$', labelpos='W',
                    fontproperties={'weight': 'bold'})
                    
