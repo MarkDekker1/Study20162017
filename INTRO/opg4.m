@@ -1,4 +1,4 @@
-function Results = opg4(K,dt,omega,theta,A,T0,T)
+function Results = opg4(K,dt,omega,theta,A,T0,T,accelerate)
     % ----- Function to calculate order parameter with input K -----
     % ----- Parameters, vectors and matrices -----
     N=length(omega);
@@ -18,7 +18,7 @@ function Results = opg4(K,dt,omega,theta,A,T0,T)
         
     % ----- Low-energy network -----
     % ----- Create network -----
-    A_low=NodeCoupler(A,omega);
+    A_low=NodeCoupler_final(A,omega,accelerate);
     theta_low=zeros([N,(T+T0)/dt]);
     theta_low(:,1)=theta(:,1);            
     

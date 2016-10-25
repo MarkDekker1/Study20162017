@@ -3,6 +3,11 @@
 # ------------------------------------------------------
 
 from mpl_toolkits.basemap import Basemap
+lon_all_s=Lon_vec_s
+lon_all_c=Lon_vec_c
+lat_all_s=Lat_vec_s
+lat_all_c=Lat_vec_c
+
 
 # ------------------------------------------------------
 # Start Basemap
@@ -20,8 +25,8 @@ m.drawmapboundary(fill_color='#99ffff')
 m.fillcontinents(color='#cc9966',lake_color='#99ffff')
 par = m.drawparallels(np.arange(15,20,1),labels=[1,0,0,0])
 mer = m.drawmeridians(np.arange(-65,-59,1),labels=[0,0,0,1])
-stations_s	= np.arange(1, len(lon_all_s) + 1)
-stations_c	= np.arange(1, len(lon_all_c) + 1)
+stations_s	= which_SCAMP_vec#np.arange(1, len(lon_all_s) + 1)
+stations_c	= which_CTD_vec#np.arange(1, len(lon_all_c) + 1)
 
 # ------------------------------------------------------
 # Plot SCAMP stations

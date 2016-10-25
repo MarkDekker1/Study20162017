@@ -1,10 +1,9 @@
 function A_lowend = NodeCoupler(A,omega)
 
     % ----- Low-energy network -----
-    % ----- Create network -----
+    % ----- Create empty matrix -----
     A_low=zeros(length(A));
-    
-    
+        
     % ----- Create network -----
     
     degrees=sum(A);
@@ -15,7 +14,7 @@ function A_lowend = NodeCoupler(A,omega)
     r=0;
     while sum(degrees_degen)>0,
         a=omega_degen(find(omega_degen~=0));
-        Max=find(omega==max(a));
+        Max=find(omega_degen==max(a));
         Min=1:degrees_degen(Max);
         vec=degrees_degen(Min);
         a=degrees_degen(Max);
@@ -32,19 +31,23 @@ function A_lowend = NodeCoupler(A,omega)
         end
 
         if length(Max)>0 && length(Min)>0,
-            if sum(degrees_degen)>length(Min),
+            if sum(degrees_degen)/2>length(Min),
                 A_low(Max,Min)=1;
                 degrees_degen(Min)=degrees_degen(Min)-1;
                 degrees_degen(Max)=0;
                 omega_degen(Max)=0;
             else
-                Min=Min(1:sum(degrees_degen));
+                
+                find(degrees_degen>0)
+                Min=Min(1:sum(degrees_degen)/2);
                 A_low(Max,Min)=1;
                 degrees_degen(Min)=degrees_degen(Min)-1;
                 degrees_degen(Max)=degrees_degen(Max)-length(Min);
+                sum(degrees_degen)
             end
         end
         r=r+1;
     end
-    A_lowend=A_low%%+transpose(A_low);
+    A_lowend=A_low+transpose(A_low);
+    find(degrees_degen>0)
 end

@@ -4,10 +4,6 @@ def Compare(T_c,T_s,D_c,D_s):
     # Redefining for clarity
     # ------------------------------------------------------
     
-#    temp_c=data_c.temp
-#    temp_s=data_s.temp_acc
-#    depth_c=data_c.depth
-#    depth_s=data_s.depth
     temp_c=T_c
     temp_s=T_s
     depth_c=D_c
@@ -32,18 +28,12 @@ def Compare(T_c,T_s,D_c,D_s):
     S_matrix=[seg_temp_s]
     E_matrix=[seg_error]
     C_matrix=[seg_temp_c]
-    
-    #plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
-    #plt.plot(seg_temp_c,seg_depth,'k-',linewidth=2)
-    #plt.plot(data_s.temp_acc[:data_s.down_cast],data_s.depth[:data_s.down_cast], 'y-',linewidth=0.5)
-    #plt.plot(data_s.temp_acc[data_s.down_cast:data_s.surface],data_s.depth[data_s.down_cast:data_s.surface],'y-',linewidth=0.5)
-    #plt.plot(seg_temp_s,seg_depth, 'r-',linewidth=2)
-    
+        
     # ------------------------------------------------------
-    # Remove error linear with depth (error variance threshold 0.02)
+    # Remove error linear with depth (error variance threshold 50000 to skip this)
     # ------------------------------------------------------
     
-    threshold=0.005
+    threshold=50000
     mtake=4
     length=len(seg_temp_s)
     if np.var(E_matrix[0])>threshold:
@@ -52,11 +42,9 @@ def Compare(T_c,T_s,D_c,D_s):
         vec=coefficient*(seg_depth-seg_depth[0])
         S_matrix.append(S_matrix[0]+vec)#-E_matrix[0][0])
         E_matrix.append(S_matrix[1]-seg_temp_c)
-        #plt.plot(S_matrix[1],seg_depth,'b-',linewidth=2)
     else:
         S_matrix.append(S_matrix[0])
         E_matrix.append(E_matrix[0])
-        #plt.plot(S_matrix[1],seg_depth,'b-',linewidth=2)
         
     # ------------------------------------------------------
     # Remove lag
@@ -87,36 +75,30 @@ def Compare(T_c,T_s,D_c,D_s):
             S_new.append(np.array(S_matrix[1]))
             C_new.append(np.array(C_matrix[0]))
         E_new.append(np.array(S_new[i]-C_new[i]))
-        E_vec.append(np.var(E_new[i]))
+        E_vec.append(np.var(E_new[i])/len(E_new))
         
-    if E_vec[where(lag_vec==0)[0]]>np.min(E_vec)*1.01:
-        finder=where(E_vec==np.min(E_vec))
+    if E_vec[where(lag_vec==0)[0][0]]>np.nanmin(E_vec)*3:
+        finder=where(E_vec==np.nanmin(E_vec))
     else:
         finder=[where(lag_vec==0)[0]]
-    Best_lag=lag_vec[finder[0]]
-    Best_D=D_new[finder[0]]
-    Best_C=C_new[finder[0]]
-    Best_E=E_new[finder[0]]
-    Best_S=S_new[finder[0]]
-    #plt.plot(Best_S,Best_D,'g-',linewidth=2)
+    
+    finder=finder[0][0]
+    Best_lag=lag_vec[finder]
+    Best_D=D_new[finder]
+    Best_C=C_new[finder]
+    Best_E=E_new[finder]
+    Best_S=S_new[finder]
     
     # ------------------------------------------------------
     # Remove constant bias
     # ------------------------------------------------------
     
+    Bias = np.mean(Best_E)
     Best_S = Best_S-np.mean(Best_E)
     Best_E2 = Best_S-Best_C
      
-    #plt.plot(Best_S,Best_D,'m-',linewidth=2)    
-    #plt.ylabel('Depth [m]',fontsize=15)
-    #plt.xlabel('Temperature [K]',fontsize=15)
-    #plt.tick_params(axis='both', which='major', labelsize=15)
-    #plt.ylim([np.max(seg_depth)+5,0])
-    
-    #plt.legend(['CTD','SCAMP raw, down','SCAMP raw, up','SCAMP seg','Lin cor', 'Lin+lag cor','Lin+lag+bias'],loc='best',prop={'size':6})
-    
     E0=mean(sqrt(np.array(E_matrix[0])**2))
     E_lin=mean(sqrt(np.array(E_matrix[1])**2))
     E_linlag=mean(sqrt(Best_E**2))
     E_linlagbias=mean(sqrt(Best_E2**2))
-    return Best_S,Best_D,Best_C
+    return Best_S,Best_D,Best_C,Bias,Best_lag

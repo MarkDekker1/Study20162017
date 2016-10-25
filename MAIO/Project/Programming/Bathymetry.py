@@ -29,6 +29,12 @@ for i in range(0,len(Depth)):
 # ------------------------------------------------------
 # Plot
 # ------------------------------------------------------    
+Start1=0
+End1=11
+Start2=13
+End2=23
+Start3=27
+End3=33
 
 plt.figure(figsize=(15,15))
 m = Basemap(projection = 'merc',
@@ -40,6 +46,25 @@ x,y=m(Lon_bath,Lat_bath)
 c=plt.contourf(x,y,-Depth,cmap=plt.cm.BrBG,levels=[10,15,20,25,50,100,250,500,750,1000,2000,3000,4000,5000,6000,7000],norm=colors.LogNorm(vmin=10,vmax=5000))
 
 cbar = m.colorbar(c,ticks=[1e1,1e2,1e3,1e4], extend='both', location='bottom',pad="10%")#spacing='uniform'
+x,y=m(Lon_vec_s[Start1:End1],Lat_vec_s[Start1:End1])
+plt.scatter(x,y,s=100,c='r',zorder=15)
+plt.plot(x,y,'r',linewidth=3)
+#x,y=m(Lon_vec_c[Start1:End1],Lat_vec_c[Start1:End1])
+#plt.scatter(x,y,s=40,c='b',zorder=16)
+
+x,y=m(Lon_vec_s[Start2:End2],Lat_vec_s[Start2:End2])
+plt.scatter(x,y,s=100,c='r',zorder=15)
+plt.plot(x,y,'r',linewidth=3)
+#x,y=m(Lon_vec_c[Start2:End2],Lat_vec_c[Start2:End2])
+#plt.scatter(x,y,s=40,c='b',zorder=16)
+
+x,y=m(Lon_vec_s[Start3:End3],Lat_vec_s[Start3:End3])
+plt.scatter(x,y,s=100,c='r',zorder=15)
+plt.plot(x,y,'r',linewidth=3)
+#x,y=m(Lon_vec_c[Start3:End3],Lat_vec_c[Start3:End3])
+#plt.scatter(x,y,s=40,c='b',zorder=16)
+
+
 
 m.drawcoastlines(linewidth=0.2)
 m.drawcountries()

@@ -2,8 +2,12 @@
 # Defining station-couples
 # ------------------------------------------------------
 
-which_CTD_vec=[9,10,22,21,8,7,6,19,11,4,3,3,16,15,62,61,60,59,59,58,58,58,57,56,55,54,53]
-which_SCAMP_vec=[22,23,33,32,21,29,18,30,25,17,16,15,29,28,13,12,11,10,9,8,7,6,5,4,3,2,1]
+#which=9
+#which_CTD_vec=[9,10,22,21,8,7,6,18,11,4,3,3,16,15,62,61,60,59,59,58,58,58,57,56,55,54,53,7]
+#which_SCAMP_vec=[22,23,33,32,21,19,18,30,25,17,16,15,29,28,13,12,11,10,9,8,7,6,5,4,3,2,1,20]
+
+which_SCAMP_vec=np.arange(0,35,1)
+which_CTD_vec=[52,53,54,55,56,57,57,57,58,58,59,61,61,0,2,2,3,5,6,7,7,8,9,10,11,12,13,14,15,18,18,20,21,22,22]
 
 #which_CTD_vec=[which_CTD_vec[which]]
 #which_SCAMP_vec=[which_SCAMP_vec[which]]
@@ -14,12 +18,20 @@ Temp_matrix_c=[]
 Temp_matrix_sref=[]
 Temp_matrix_dref=[]
 Temp_matrix_cref=[]
-Lat_vec=[]
-Lon_vec=[]
+Lat_vec_c=[]
+Lon_vec_c=[]
+Lat_vec_s=[]
+Lon_vec_s=[]
+Bias_vector=[]
+Lag_vector=[]
+Timedif_vector=[]
+ctd_time=[]
+scamp_time=[]
 
 # ------------------------------------------------------
 # Start iteration
 # ------------------------------------------------------
+
 for couple in range(0,len(which_CTD_vec)):
     which_CTD=which_CTD_vec[couple]
     which_SCAMP=which_SCAMP_vec[couple]
@@ -48,7 +60,6 @@ for couple in range(0,len(which_CTD_vec)):
 # ------------------------------------------------------
 # Save data at every iteration
 # ------------------------------------------------------
-
     
     if isnan(np.nanmean(data_comp.error))==False:
         Error_matrix.append(data_comp.error)
@@ -58,10 +69,16 @@ for couple in range(0,len(which_CTD_vec)):
         Temp_matrix_cref.append(Compare(data_c.temp,data_s.temp_acc,data_c.depth,data_s.depth)[2])
         Temp_matrix_c.append(data_comp.temp_c)
         Depth_matrix.append(data_comp.depth)
-        Lon_vec.append(data_c.lon)
-        Lat_vec.append(data_c.lat)
+        Lon_vec_c.append(data_c.lon)
+        Lat_vec_c.append(data_c.lat)
+        Lon_vec_s.append(data_s.lon)
+        Lat_vec_s.append(data_s.lat)
+        Bias_vector.append(Compare(data_c.temp,data_s.temp_acc,data_c.depth,data_s.depth)[3])
+        Lag_vector.append(Compare(data_c.temp,data_s.temp_acc,data_c.depth,data_s.depth)[4])
+        ctd_time.append(data_c.hour[0]+data_c.minute[0]/60.+data_c.second[0]/60.)
+        scamp_time.append(data_s.time_fraction)
     print(couple)
-    
+
     
 # ------------------------------------------------------
 # Plot temperatures of CTD and SCAMP in scatterplot (colors=depth)
@@ -77,11 +94,93 @@ for i in range(0,len(Temp_matrix_s)):
 
 plt.colorbar(sc)
 plt.plot([27,30], [27,30],'k')
-plt.ylabel('Temperature CTD [K]',fontsize=15)
-plt.xlabel('Temperature SCAMP [K]',fontsize=15)
+plt.ylabel(r'Temperature CTD [$^0 C$]',fontsize=15)
+plt.xlabel(r'Temperature SCAMP [$^0 C$]',fontsize=15)
 plt.xlim([27,30])
 plt.ylim([27,30])
 plt.tick_params(axis='both', which='major', labelsize=15)
+
+
+# ------------------------------------------------------
+# Plot depth profiles: raw
+# ------------------------------------------------------
+#%%
+from scipy.stats import norm
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+
+Error_matrix2=[]
+for i in range(0,len(Temp_matrix_s)):
+    Error_matrix2.append(np.array(Temp_matrix_sref[i])-np.array(Temp_matrix_cref[i]))
+
+Error_matrix3=[]
+maxdepth=300000
+mindepth=30
+
+for i in range(0,len(Error_matrix)):
+    finder1=np.where(np.array(Depth_matrix[i])<maxdepth)[0]
+    finder2=np.where(np.array(Depth_matrix[i])>mindepth)[0]
+    finder = list(set(finder1).intersection(finder2))
+    Error_vec=[]
+    for j in finder:
+        Error_vec.append(np.array(Error_matrix)[i][j])
+    Error_matrix3.append(Error_vec)
+
+CHOOSE=Error_matrix3
+#Error_matrix   : Raw
+#Error_matrix2  : Refined with lag/bias
+#Error_matrix3  : Specific depths
+
+plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
+matrix=[]
+for i in range(0,len(CHOOSE)):
+    matrix=matrix+list(CHOOSE[i])
+
+matrix2=[]
+for i in range(0,len(matrix)):
+    if not isnan(matrix[i]):
+        matrix2.append(matrix[i])
+        
+(mu, sigma) = norm.fit(matrix2)
+n, bins, patches = plt.hist(matrix2, 60, normed=1, alpha=0.7,histtype='stepfilled')
+y = mlab.normpdf( bins, mu, sigma)
+l = plt.plot(bins, y, 'k--', linewidth=4)
+plt.plot([0,0], [0,max(y)],'-',color='k',linewidth=4,zorder=15)
+plt.plot([mu,mu], [0,max(y)],color='brown',linewidth=4,zorder=15)
+plt.plot([0,0], [0,10],'--',color='k',linewidth=2,zorder=1)
+plt.plot([mu,mu], [0,10],'--',color='brown',linewidth=2,zorder=1)
+
+plt.xlabel('Temperature error',fontsize=15)
+plt.xlim([-1,1])
+plt.ylim([0,10])
+plt.ylabel('Probability density',fontsize=15)
+plt.tick_params(axis='both', which='major', labelsize=15)
+
+plt.show()
+
+# ------------------------------------------------------
+# Plot RSME versus time difference
+# ------------------------------------------------------
+#%%
+Timedif_vector=np.array(scamp_time)+3-np.array(ctd_time)
+RSME_vec=[]
+Depth_vec=[]
+cm = plt.cm.get_cmap('jet')
+
+for i in range(0,len(Temp_matrix_s)):
+    RSME_vec.append(np.sqrt(np.mean((np.array(Temp_matrix_s[i])-np.array(Temp_matrix_c[i]))**2)))
+    Depth_vec.append(np.max(Depth_matrix[i]))
+
+colors=Depth_vec
+plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
+sc=plt.scatter(np.abs(Timedif_vector),RSME_vec, c=colors,alpha=0.75,s=100,cmap=cm,edgecolor='k')
+plt.colorbar(sc)
+plt.ylabel('RSME [K]',fontsize=15)
+plt.xlabel('Absolute time difference [h]',fontsize=15)
+plt.xlim([0,5.2])
+plt.ylim([0,0.4])
+plt.tick_params(axis='both', which='major', labelsize=15)
+
 
 # ------------------------------------------------------
 # Plot RSME versus maximum depth (colors=Latitude)
@@ -108,14 +207,14 @@ plt.tick_params(axis='both', which='major', labelsize=15)
 # ------------------------------------------------------
 #%%
 plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(Temp_matrix_s[0],Depth_matrix[0], 'r-',linewidth=2)
 plt.plot(Temp_matrix_c[0],Depth_matrix[0],'k-',linewidth=2)
+plt.plot(Temp_matrix_s[0],Depth_matrix[0], 'r-',linewidth=2)
 plt.ylabel('Depth [m]',fontsize=15)
 plt.xlabel('Temperature [K]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
 #plt.ylim([max(list(depth_c)+list(depth_s)) + 5, min(list(depth_c)+list(depth_s)) - 0.5])
 plt.ylim([np.max(Depth_matrix[0])+5,0])
-plt.legend(['SCAMP, down','SCAMP, up','CTD'],loc='best')
+plt.legend(['CTD','SCAMP','SCAMP, segmented'],loc='best')
 
 
 # ------------------------------------------------------

@@ -12,7 +12,6 @@ import netCDF4 as netcdf
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 from mpl_toolkits.basemap import Basemap
-matplotlib.style.use('ggplot')
 
 # ------------------------------------------------------
 # CTD data reader
@@ -125,11 +124,30 @@ class ReadData(object):
             month='08'
         else:
             month='09'
+        self.time_fraction=np.float(time_ms[0:2])+np.float(time_ms[2:4])/60.+np.float(time_ms[4:6])/3600.
                     
         month_list = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
         file = open(directory_SCAMP+year+month+day+'/'+day+month_list[int(month) - 1]+year+' '+time_ms+'.pro', 'r')
-        lines = file.readlines()
+        lines_raw = file.readlines()
         file.close()
+        
+        file_ind = open('Remove_indices.txt','r')        
+        lines_ind=file_ind.readlines()
+        file_ind.close()
+        line_spec=lines_ind[which_SCAMP+1].split()
+        
+        lines_noupcast=lines_raw[:np.int(line_spec[8])] # remove upcast
+        matrix_lines=[]
+        for i in [2,4,6]:
+            if not isnan(np.float(line_spec[i])):
+                matrix_lines.append(lines_noupcast[:np.int(line_spec[i])]+lines_noupcast[np.int(line_spec[i+1]):])
+        
+        lines=lines_noupcast
+        if len(matrix_lines)>0:
+            lines_touse=matrix_lines[0]
+            for i in range(1,len(matrix_lines)):
+                lines_touse=lines_touse+matrix_lines[i]
+            lines=lines_touse
         
         time_s     = [] #Time (sec)
         depth_s    = [] #Depth (meter)
@@ -327,3 +345,44 @@ class ReadData(object):
         self.Lat_bath=Lat_bath
         self.Lon_bath=Lon_bath
         self.Depth=Depth
+        
+    
+    def GetSpecBathymetry(self,lat,lon):
+        from netCDF4 import Dataset
+    
+        file = 'C:\Users\Mark\Documents\Studie\MAIO_Project\Data\GEBCO_2014_2D_-100.0_0.0_-50.0_40.0.nc'
+        ncdf = Dataset(file, mode='r')
+        Lat = ncdf.variables['lat'][:]
+        Lon = ncdf.variables['lon'][:]
+        Depth = ncdf.variables['elevation'][:]
+        lat_ind=np.int(round((lat+4.16666667e-03)*120.))
+        lon_ind=np.int(round((lon+99.99583333)*120.))
+        
+        Depth_spec = Depth[lat_ind,lon_ind]
+        self.Depth_spec=Depth_spec
+    
+    def GetStraightBathymetry(self,lat1,lat2,lon1,lon2,amount):
+        from netCDF4 import Dataset
+    
+        file = 'C:\Users\Mark\Documents\Studie\MAIO_Project\Data\GEBCO_2014_2D_-100.0_0.0_-50.0_40.0.nc'
+        ncdf = Dataset(file, mode='r')
+        Lat = ncdf.variables['lat'][:]
+        Lon = ncdf.variables['lon'][:]
+        Depth = ncdf.variables['elevation'][:]
+        
+        lat_ind1=np.int(round((lat1+4.16666667e-03)*120.))
+        lon_ind1=np.int(round((lon1+99.99583333)*120.))
+        lat_ind2=np.int(round((lat2+4.16666667e-03)*120.))
+        lon_ind2=np.int(round((lon2+99.99583333)*120.))
+        
+        #diflat=np.abs(lat_ind2-lat_ind1)/amount
+        #diflon=np.abs(lon_ind2-lon_ind1)/amount
+        
+        latvec=np.linspace(lat_ind1,lat_ind2,amount)    
+        lonvec=np.linspace(lon_ind1,lon_ind2,amount)        
+        
+        Vector=[]
+        for i in range(0,amount):
+            Vector.append(Depth[np.int(np.round(latvec[i])),np.int(np.round(lonvec[i]))])
+       
+        self.Depth_vector=Vector
