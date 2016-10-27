@@ -15,7 +15,7 @@ Start2=13
 End2=23
 Start3=27
 End3=33
-which_CTD_vec=which_CTD_vec[Start3:End3]
+which_CTD_vec=which_CTD_vec[Start1:End1]
 
 which_depth=10
 Depth_matrix=[]

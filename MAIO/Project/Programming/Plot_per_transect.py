@@ -1,6 +1,6 @@
 fig= plt.figure(figsize=(10,12))
 deepest1=50
-deepest2=1000
+deepest2=4000
 colorbarused1=plt.cm.rainbow
 colorbarused2=plt.cm.coolwarm
 colorstationlines='white'
@@ -64,6 +64,7 @@ plt.ylim([-deepest1,-2])
 plt.xlim([0,max(Horvec)])
 plt.ylabel('Depth (m)',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
+plt.tick_params(axis='x',which='both',bottom='off',top='off',labelbottom='off')
 fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.85, 0.58, 0.05, 0.3])
 a=fig.colorbar(cs3, cax=cbar_ax)
@@ -107,11 +108,17 @@ for i in range(0,len(Stations_dist)):
     ind=Stations_dist[i]
     plt.plot([ind,ind], [-deepest2,0],'--',color=colorstationlines,linewidth=2,zorder=51)
 
-for j in range(0,len(unique(Stations_dist))):
-    #plt.scatter(Stations_dist,zeros(len(Stations_dist)),s=200,c='orange',alpha=1,zorder=52,edgecolor='k',linewidth=2)
-    plt.text(unique(Stations_dist)[j]-0.013*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=15,zorder=53,backgroundcolor='grey',fontweight='bold')
+if extra==0:
+    for j in range(0,len(unique(Stations_dist))):
+        #plt.scatter(Stations_dist,zeros(len(Stations_dist)),s=200,c='orange',alpha=1,zorder=52,edgecolor='k',linewidth=2)
+        plt.text(unique(Stations_dist)[j]-0.025*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=21,zorder=53,fontweight='bold')
 if extra==1:
-    plt.text(unique(Stations_dist)[1]-0.035*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[1],fontsize=15,zorder=54,backgroundcolor='grey',fontweight='bold')
+    for j in range(0,len(unique(Stations_dist))):
+        
+        if j!=1:
+            plt.text(unique(Stations_dist)[j]-0.025*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=21,zorder=53,fontweight='bold')
+        if j==1:
+            plt.text(unique(Stations_dist)[j]-0.045*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=21,zorder=54,fontweight='bold')
 
 plt.fill_between(Horvec[::-1], -10000, a, facecolor=colorbottom,zorder=50)#saddlebrown
 plt.plot(Horvec[::-1],a,'k',linewidth=3,zorder=51)
