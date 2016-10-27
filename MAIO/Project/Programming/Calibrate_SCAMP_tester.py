@@ -2,6 +2,7 @@
 # Redefining for clarity
 # ------------------------------------------------------
 
+plt.style.use('ggplot')
 temp_c=data_c.temp
 temp_s=data_s.temp_acc
 depth_c=data_c.depth
@@ -32,9 +33,9 @@ for i in range(0,len(vectortje)):
     vectortje2.append(np.int(vectortje[i]))
 
 plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
-plt.plot(seg_temp_c,seg_depth,'k-',label='CTD', linewidth=2)
-plt.plot(data_s.temp_acc,data_s.depth, 'y-',label='SCAMP',linewidth=0.5)
-plt.plot(seg_temp_s,seg_depth, 'r-',label='SCAMP seg',linewidth=2)
+plt.plot(seg_temp_c,seg_depth,'k-',label='CTD', linewidth=4)
+plt.plot(data_s.temp_acc[0:len(data_s.temp_acc)-3],data_s.depth[0:len(data_s.temp_acc)-3], 'g-',label='SCAMP',linewidth=0.5)
+plt.plot(seg_temp_s,seg_depth, 'r-',label='SCAMP seg',linewidth=4)
 
 # ------------------------------------------------------
 # Remove error linear with depth (error variance threshold 0.02)
@@ -96,7 +97,7 @@ Best_D=D_new[finder]
 Best_C=C_new[finder]
 Best_E=E_new[finder]
 Best_S=S_new[finder]
-#plt.plot(Best_S,Best_D,'g-',label='Lag removed',linewidth=2)
+#plt.plot(Best_S,Best_D,'g--',label='Lag removed',linewidth=2)
 
 # ------------------------------------------------------
 # Remove constant bias
@@ -105,13 +106,13 @@ Best_S=S_new[finder]
 Best_S = Best_S-np.mean(Best_E)
 Best_E2 = Best_S-Best_C
  
-#plt.plot(Best_S,Best_D,'m-',label='Bias removed',linewidth=2)    
+plt.plot(Best_S,Best_D,'m-',label='Approximation',linewidth=2)    
 plt.ylabel('Depth [m]',fontsize=15)
 plt.xlabel(r'Temperature [$^0 C$]',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
 plt.ylim([np.max(seg_depth)+5,0])
 
-plt.legend(loc='best',prop={'size':9})
+plt.legend(loc='best',prop={'size':13})
 
 E0=mean(sqrt(np.array(E_matrix[0])**2))
 E_lin=mean(sqrt(np.array(E_matrix[1])**2))

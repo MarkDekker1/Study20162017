@@ -15,7 +15,7 @@ Start2=13
 End2=23
 Start3=27
 End3=33
-which_CTD_vec=which_CTD_vec[Start1:End1]
+which_CTD_vec=which_CTD_vec[Start3:End3]
 
 which_depth=10
 Depth_matrix=[]
@@ -86,19 +86,36 @@ Depth1=Depth_matrix
 Lon1=Lon_vec_c
 Lat1=Lat_vec_c
 Stations1=which_CTD_vec
+Stations1_s=[1,2,3,4,5,6,7,8]
 #%%
 Temp2=Temp_matrix
 Depth2=Depth_matrix
 Lon2=Lon_vec_c
 Lat2=Lat_vec_c
 Stations2=which_CTD_vec
+Stations2_s=[11,12,13,14,15,16,18,17]
 #%%
 Temp3=Temp_matrix
 Depth3=Depth_matrix
 Lon3=Lon_vec_c
 Lat3=Lat_vec_c
 Stations3=which_CTD_vec
+Stations3_s=[21,22,23,24,25]
 
+#%%
+Temp1=Temp2
+Depth1=Depth2
+Lon1=Lon2
+Lat1=Lat2
+Stations1=Stations2
+Stations1_s=Stations2_s
+#%%
+Temp1=Temp3
+Depth1=Depth3
+Lon1=Lon3
+Lat1=Lat3
+Stations1=Stations3
+Stations1_s=Stations3_s
 #%%
 # ------------------------------------------------------
 # Singleplot
@@ -177,7 +194,7 @@ plt.plot(Horvec[::-1],a,'k',linewidth=3,zorder=51)
 
 f=interpolate.interp1d(Stations_dist,MaximaMatrix(Depth1))
 a=f(Horvec)
-plt.fill_between(Horvec, -10000, -a, facecolor='white',alpha=transparency,zorder=25)#saddlebrown
+#plt.fill_between(Horvec, -10000, -a, facecolor='white',alpha=transparency,zorder=25)#saddlebrown
 
 
 plt.ylim([-deepest1,-2])
@@ -231,7 +248,7 @@ plt.fill_between(Horvec[::-1], -10000, a, facecolor=colorbottom,zorder=50)#saddl
 plt.plot(Horvec[::-1],a,'k',linewidth=3,zorder=51)
 f=interpolate.interp1d(Stations_dist,MaximaMatrix(Depth2))
 a=f(Horvec)
-plt.fill_between(Horvec, -10000, -a, facecolor='white',alpha=transparency,zorder=25)#saddlebrown
+#plt.fill_between(Horvec, -10000, -a, facecolor='white',alpha=transparency,zorder=25)#saddlebrown
 plt.ylim([-deepest2,-2])
 plt.xlim([0,max(Horvec)])
 #plt.xlabel('Horizontal distance (m)',fontsize=15)
@@ -284,7 +301,7 @@ plt.fill_between(Horvec[::-1], -10000, a, facecolor=colorbottom,zorder=50)#saddl
 plt.plot(Horvec[::-1],a,'k',linewidth=3,zorder=51)
 f=interpolate.interp1d(Stations_dist,MaximaMatrix(Depth3))
 a=f(Horvec)
-plt.fill_between(Horvec, -10000, -a, facecolor='white',alpha=transparency,zorder=25)#saddlebrown
+#plt.fill_between(Horvec, -10000, -a, facecolor='white',alpha=transparency,zorder=25)#saddlebrown
 
 plt.ylim([-deepest3,-2])
 plt.xlim([0,max(Horvec)])
