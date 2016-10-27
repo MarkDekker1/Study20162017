@@ -15,6 +15,7 @@ vmaxb=30
 size=125
 dev=1
 extra=1
+string='Transect2_Temperature.pdf'
 
 # ------------------------------------------------------
 # Plot1
@@ -134,3 +135,5 @@ cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.3])
 a=fig.colorbar(cs, cax=cbar_ax)
 a.ax.tick_params(labelsize=15)
 a.set_label(r'Temperature ($^0$C)',size=15)
+
+savefig(string,bbox_inches='tight')

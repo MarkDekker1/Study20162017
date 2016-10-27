@@ -129,7 +129,7 @@ Uvarplot=U2_var
 Vvarplot=V2_var
 Velovarplot=Velo_var
 
-fig, (ax1,ax2)= plt.subplots(2,1,sharex=True,figsize=(10,8))
+fig, (ax1,ax2)= plt.subplots(2,1,sharex=True,figsize=(10,8),dpi=1000)
 
 vmina=29
 vmaxa=29.6
@@ -147,6 +147,7 @@ Quiversize=0.5
 Quivertitle=r'$0.5 m/s$'
 contours=[2e-4,3e-4,4e-4,8e-4,12e-4,50e-4,1e-2,5e-2]
 alphacont=0.3
+string='Mesoscale_situation2.pdf'
 
 my_cmap = copy(cm.get_cmap(colormapused))
 my_cmap.set_bad('white')
@@ -194,13 +195,15 @@ a.set_label(r'Variance Temperature ($^0$C$^2$)',size=15)
 ax2.contourf(lon2,lat2,Velovarplot,levels=[8e-4,100000],colors=['black','white'],alpha=alphacont,zorder=35)
 
 
+savefig(string,bbox_inches='tight')
 #%%
-fig, (ax1,ax2,ax3)= plt.subplots(3,1,sharex=True,figsize=(10,8))
+fig, (ax1,ax2,ax3)= plt.subplots(3,1,sharex=True,figsize=(10,8),dpi=1000)
 
 factor1=-8.1
 factor2=-6.5
 amountcolors=100
 colormapused=plt.cm.rainbow
+string='Fourier_spectra2.pdf'
 
 #vmina=1*10**factor1
 #vmaxa=1*10**factor2
@@ -288,3 +291,4 @@ cbar_ax = fig.add_axes([0.85, 0.1, 0.05, 0.25])
 a=fig.colorbar(c,cax=cbar_ax)
 a.ax.tick_params(labelsize=15)
 a.set_label(r'Higher timescales',size=15)
+savefig(string,bbox_inches='tight')
