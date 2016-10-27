@@ -1,6 +1,6 @@
 fig= plt.figure(figsize=(10,12),dpi=1000)
 deepest1=50
-deepest2=1500
+deepest2=4000
 colorbarused1=plt.cm.rainbow
 colorbarused2=plt.cm.coolwarm
 colorstationlines='white'
@@ -13,9 +13,9 @@ vmaxa=30
 vminb=4
 vmaxb=30
 size=125
-dev=1
-extra=1
-string='Transect2_Temperature.pdf'
+dev=0
+extra=0
+string='Transect1_Temperature.pdf'
 
 # ------------------------------------------------------
 # Plot1
