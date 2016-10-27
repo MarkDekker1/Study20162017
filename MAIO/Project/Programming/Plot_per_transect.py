@@ -1,6 +1,6 @@
 fig= plt.figure(figsize=(10,12))
 deepest1=50
-deepest2=4000
+deepest2=1500
 colorbarused1=plt.cm.rainbow
 colorbarused2=plt.cm.coolwarm
 colorstationlines='white'
@@ -13,8 +13,8 @@ vmaxa=30
 vminb=4
 vmaxb=30
 size=125
-dev=0
-extra=0
+dev=1
+extra=1
 
 # ------------------------------------------------------
 # Plot1
@@ -118,7 +118,7 @@ if extra==1:
         if j!=1:
             plt.text(unique(Stations_dist)[j]-0.025*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=21,zorder=53,fontweight='bold')
         if j==1:
-            plt.text(unique(Stations_dist)[j]-0.045*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=21,zorder=54,fontweight='bold')
+            plt.text(unique(Stations_dist)[j]-0.065*Stations_dist[len(Stations_dist)-1],deepest2/16.,Stations1_s[j],fontsize=21,zorder=54,fontweight='bold')
 
 plt.fill_between(Horvec[::-1], -10000, a, facecolor=colorbottom,zorder=50)#saddlebrown
 plt.plot(Horvec[::-1],a,'k',linewidth=3,zorder=51)
@@ -126,7 +126,7 @@ f=interpolate.interp1d(Stations_dist,MaximaMatrix(Depth1))
 a=f(Horvec)
 plt.ylim([-deepest2,-2])
 plt.xlim([0,max(Horvec)])
-plt.xlabel('Horizontal distance (m)',fontsize=15)
+plt.xlabel('Horizontal distance (km)',fontsize=15)
 plt.ylabel('Depth (m)',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
 fig.subplots_adjust(right=0.8)
