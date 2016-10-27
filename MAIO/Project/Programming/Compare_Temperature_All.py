@@ -129,12 +129,12 @@ for i in range(0,len(Error_matrix)):
         Error_vec.append(np.array(Error_matrix)[i][j])
     Error_matrix3.append(Error_vec)
 
-CHOOSE=Error_matrix
+CHOOSE=Error_matrix2
 #Error_matrix   : Raw
 #Error_matrix2  : Refined with lag/bias
 #Error_matrix3  : Specific depths
 
-plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
+plt.figure(figsize=(8,4),dpi=1000)
 matrix=[]
 for i in range(0,len(CHOOSE)):
     matrix=matrix+list(CHOOSE[i])
@@ -153,12 +153,12 @@ l = plt.plot(bins, y, 'k--', linewidth=3)
 #plt.plot([0,0], [0,10],'--',color='k',linewidth=2,zorder=1)
 #plt.plot([mu,mu], [0,10],'--',color='brown',linewidth=2,zorder=1)
 plt.plot([0,0], [0,10],'-',color='k',linewidth=3,zorder=1)
-plt.plot([mu,mu], [0,10],'-',color='r',linewidth=3,zorder=1)
+#plt.plot([mu,mu], [0,10],'-',color='r',linewidth=3,zorder=1)
 plt.text(-0.75,8,'Mean',fontsize=15)
 plt.text(-0.75,7,'Variance',fontsize=15)
-plt.text(-0.44,8,'-',fontsize=20)
+#plt.text(-0.44,8,'-',fontsize=20)
 plt.text(-0.4,8,'0.000',fontsize=15)
-plt.text(-0.4,7,'0.026',fontsize=15)
+plt.text(-0.4,7,'0.008',fontsize=15)
 
 plt.xlabel('Temperature error',fontsize=15)
 plt.xlim([-1,1])
@@ -166,8 +166,7 @@ plt.ylim([0,10])
 plt.ylabel('Frequency',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
 
-plt.show()
-savefig('PDF_Raw.pdf',bbox_inches='tight')
+savefig('PDF_Calibrated.pdf',bbox_inches='tight')
 
 # ------------------------------------------------------
 # Plot RSME versus time difference
