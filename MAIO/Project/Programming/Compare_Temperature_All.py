@@ -84,22 +84,25 @@ for couple in range(0,len(which_CTD_vec)):
 # Plot temperatures of CTD and SCAMP in scatterplot (colors=depth)
 # ------------------------------------------------------
 #%%
-plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
+plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
 cm = plt.cm.get_cmap('jet')
 for i in range(0,len(Temp_matrix_s)):
-    #colors=np.linspace(Depth_matrix[i][0],Depth_matrix[i][len(Depth_matrix[i])-1],len(Temp_matrix_s[i]))
-    #sc=plt.scatter(Temp_matrix_s[i],Temp_matrix_c[i], c=colors,vmin=0,vmax=50, alpha=0.8,s=50,cmap=cm)
-    colors=np.linspace(Temp_matrix_dref[i][0],Temp_matrix_dref[i][len(Temp_matrix_dref[i])-1],len(Temp_matrix_sref[i]))
-    sc=plt.scatter(Temp_matrix_sref[i],Temp_matrix_cref[i], c=colors,vmin=0,vmax=50, alpha=0.8,s=50,cmap=cm,marker='D')
+    colors=np.linspace(Depth_matrix[i][0],Depth_matrix[i][len(Depth_matrix[i])-1],len(Temp_matrix_s[i]))
+    sc=plt.scatter(Temp_matrix_s[i],Temp_matrix_c[i], c=colors,vmin=0,vmax=50, alpha=0.6,s=75,cmap=cm)
+    #colors=np.linspace(Temp_matrix_dref[i][0],Temp_matrix_dref[i][len(Temp_matrix_dref[i])-1],len(Temp_matrix_sref[i]))
+    #sc=plt.scatter(Temp_matrix_sref[i],Temp_matrix_cref[i], c=colors,vmin=0,vmax=50, alpha=0.6,s=75,cmap=cm)
 
-plt.colorbar(sc)
+a=plt.colorbar(sc)
 plt.plot([27,30], [27,30],'k')
 plt.ylabel(r'Temperature CTD [$^0 C$]',fontsize=15)
 plt.xlabel(r'Temperature SCAMP [$^0 C$]',fontsize=15)
 plt.xlim([27,30])
 plt.ylim([27,30])
 plt.tick_params(axis='both', which='major', labelsize=15)
+a.ax.tick_params(labelsize=15)
+a.set_label(r'Depth (m)',size=15)
 
+savefig('Scatter_Raw.pdf',bbox_inches='tight')
 
 # ------------------------------------------------------
 # Plot depth profiles: raw
@@ -126,12 +129,12 @@ for i in range(0,len(Error_matrix)):
         Error_vec.append(np.array(Error_matrix)[i][j])
     Error_matrix3.append(Error_vec)
 
-CHOOSE=Error_matrix3
+CHOOSE=Error_matrix
 #Error_matrix   : Raw
 #Error_matrix2  : Refined with lag/bias
 #Error_matrix3  : Specific depths
 
-plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
+plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
 matrix=[]
 for i in range(0,len(CHOOSE)):
     matrix=matrix+list(CHOOSE[i])
@@ -142,21 +145,29 @@ for i in range(0,len(matrix)):
         matrix2.append(matrix[i])
         
 (mu, sigma) = norm.fit(matrix2)
-n, bins, patches = plt.hist(matrix2, 60, normed=1, alpha=0.7,histtype='stepfilled')
+n, bins, patches = plt.hist(matrix2, 60, normed=1, alpha=1,histtype='stepfilled')
 y = mlab.normpdf( bins, mu, sigma)
-l = plt.plot(bins, y, 'k--', linewidth=4)
-plt.plot([0,0], [0,max(y)],'-',color='k',linewidth=4,zorder=15)
-plt.plot([mu,mu], [0,max(y)],color='brown',linewidth=4,zorder=15)
-plt.plot([0,0], [0,10],'--',color='k',linewidth=2,zorder=1)
-plt.plot([mu,mu], [0,10],'--',color='brown',linewidth=2,zorder=1)
+l = plt.plot(bins, y, 'k--', linewidth=3)
+#plt.plot([0,0], [0,max(y)],'-',color='k',linewidth=4,zorder=15)
+#plt.plot([mu,mu], [0,max(y)],color='brown',linewidth=4,zorder=15)
+#plt.plot([0,0], [0,10],'--',color='k',linewidth=2,zorder=1)
+#plt.plot([mu,mu], [0,10],'--',color='brown',linewidth=2,zorder=1)
+plt.plot([0,0], [0,10],'-',color='k',linewidth=3,zorder=1)
+plt.plot([mu,mu], [0,10],'-',color='r',linewidth=3,zorder=1)
+plt.text(-0.75,8,'Mean',fontsize=15)
+plt.text(-0.75,7,'Variance',fontsize=15)
+plt.text(-0.44,8,'-',fontsize=20)
+plt.text(-0.4,8,'0.000',fontsize=15)
+plt.text(-0.4,7,'0.026',fontsize=15)
 
 plt.xlabel('Temperature error',fontsize=15)
 plt.xlim([-1,1])
 plt.ylim([0,10])
-plt.ylabel('Probability density',fontsize=15)
+plt.ylabel('Frequency',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
 
 plt.show()
+savefig('PDF_Raw.pdf',bbox_inches='tight')
 
 # ------------------------------------------------------
 # Plot RSME versus time difference
