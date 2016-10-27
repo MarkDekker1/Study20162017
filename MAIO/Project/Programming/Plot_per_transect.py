@@ -1,4 +1,4 @@
-fig= plt.figure(figsize=(10,12))
+fig= plt.figure(figsize=(10,12),dpi=1000)
 deepest1=50
 deepest2=1500
 colorbarused1=plt.cm.rainbow
