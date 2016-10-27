@@ -38,7 +38,7 @@ End3=33
 
 plt.figure(figsize=(15,15),dpi=1000)
 m = Basemap(projection = 'merc',
-llcrnrlat=17, urcrnrlat=18.1,
+llcrnrlat=16.7, urcrnrlat=18.5,
 llcrnrlon=-64.5, urcrnrlon=-60.3,
 resolution='h', area_thresh=0.001)
 
