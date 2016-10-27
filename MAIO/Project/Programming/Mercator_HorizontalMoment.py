@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 from copy import copy
-index=index_vec[0]
+index=0#index_vec[0]
 
 # ------------------------------------------------------
 # Read data
@@ -79,7 +79,7 @@ x2,y2=meshgrid(lon2,lat2)
 xx,yy=m(x2,y2)
 
 cs=m.contourf(xx,yy,temp2,25)
-c2=m.contour(xx,yy,temp2,25,colors='k',linewidths=0.5)
+#c2=m.contour(xx,yy,temp2,25,colors='k',linewidths=0.5)
 cbar = m.colorbar(cs, extend='both', location='bottom',pad="10%")#spacing='uniform'
 
 plt.clim(301.5,303.5)
