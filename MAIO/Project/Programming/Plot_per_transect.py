@@ -1,6 +1,6 @@
 fig= plt.figure(figsize=(10,12),dpi=1000)
 deepest1=50
-deepest2=4000
+deepest2=1500
 colorbarused1=plt.cm.rainbow
 colorbarused2=plt.cm.coolwarm
 colorstationlines='white'
@@ -8,14 +8,14 @@ colorbottom='k'
 transparency=0.7#0.7#0.0
 OrderContour=15
 Amountcontours=15
-vmina=27.5
+vmina=27
 vmaxa=30
 vminb=4
 vmaxb=30
 size=125
-dev=0
-extra=0
-string='Transect1_Temperature.pdf'
+dev=1
+extra=1
+string='Transect2_Temperature.pdf'
 
 # ------------------------------------------------------
 # Plot1
@@ -68,7 +68,7 @@ plt.tick_params(axis='both', which='major', labelsize=15)
 plt.tick_params(axis='x',which='both',bottom='off',top='off',labelbottom='off')
 fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.85, 0.58, 0.05, 0.3])
-a=fig.colorbar(cs3, cax=cbar_ax)
+a=fig.colorbar(cs, cax=cbar_ax,extend='both')
 a.ax.tick_params(labelsize=15)
 a.set_label(r'Temperature ($^0$C)',size=15)
 
