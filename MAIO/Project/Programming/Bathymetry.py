@@ -36,16 +36,16 @@ End2=23
 Start3=27
 End3=33
 
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(15,15),dpi=1000)
 m = Basemap(projection = 'merc',
 llcrnrlat=17, urcrnrlat=18.1,
 llcrnrlon=-64.5, urcrnrlon=-60.3,
-resolution='i', area_thresh=0.001)
+resolution='h', area_thresh=0.001)
 
 x,y=m(Lon_bath,Lat_bath)
-c=plt.contourf(x,y,-Depth,cmap=plt.cm.BrBG,levels=[10,15,20,25,50,100,250,500,750,1000,2000,3000,4000,5000,6000,7000],norm=colors.LogNorm(vmin=10,vmax=5000))
-
-cbar = m.colorbar(c,ticks=[1e1,1e2,1e3,1e4], extend='both', location='bottom',pad="10%")#spacing='uniform'
+c=plt.contourf(x,y,-Depth,cmap=plt.cm.BrBG,levels=[1,5,10,15,20,25,50,100,250,500,750,1000,2000,3000,4000,5000,6000,10000],norm=colors.LogNorm(vmin=10,vmax=5000))
+#cbar_ax=fig.add_axes([0.09,0.06,0.84,0.02])
+cbar = m.colorbar(c,ticks=[1e0,1e1,1e2,1e3,1e4],extend='both', location='bottom',pad="10%")#spacing='uniform'
 x,y=m(Lon_vec_s[Start1:End1],Lat_vec_s[Start1:End1])
 plt.scatter(x,y,s=100,c='r',zorder=15)
 plt.plot(x,y,'r',linewidth=3)
@@ -65,10 +65,15 @@ plt.plot(x,y,'r',linewidth=3)
 #plt.scatter(x,y,s=40,c='b',zorder=16)
 
 
+plt.tick_params(axis='both', which='major', labelsize=15)
+cbar.ax.tick_params(labelsize=15)
+cbar.set_label(r'Depth (m)',size=15)
+cbar.ax.set_xticklabels([1,10,100,1000,10000])
 
 m.drawcoastlines(linewidth=0.2)
 m.drawcountries()
 m.drawmapboundary()
-m.fillcontinents(color='#cc9966')
-par = m.drawparallels(np.arange(15,20,0.5),labels=[1,0,0,0])
-mer = m.drawmeridians(np.arange(-65,-59,1),labels=[0,0,0,1])
+m.fillcontinents(color='grey')#color='#cc9966')
+par = m.drawparallels(np.arange(15,20,0.5),labels=[1,0,0,0],fontsize=15)
+mer = m.drawmeridians(np.arange(-65,-59,1),labels=[0,0,0,1],fontsize=15)
+savefig('Sections_Map.pdf',bbox_inches='tight')
