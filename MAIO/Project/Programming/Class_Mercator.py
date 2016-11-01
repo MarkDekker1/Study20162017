@@ -51,6 +51,7 @@ class Mercator(object):
             day_number=day_c[0]+13
         
         index_date=np.int(day_number+np.mod(hour_c[0],24)/2+minute_c[0]/120.)
+        self.Dataset=DataSet
         
         self.lon		= DataSet.variables['longitude'][index_lon]
         self.lat 	= DataSet.variables['latitude'][index_lat]
@@ -62,4 +63,4 @@ class Mercator(object):
         self.hour = date-date[0]
         self.index = index_date
         
-        DataSet.close()
+        #DataSet.close()

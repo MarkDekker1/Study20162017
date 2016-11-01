@@ -51,30 +51,107 @@ for couple in range(0,len(which_CTD_vec)):
     print(couple)
     
 # ------------------------------------------------------
-# Take value of 5 m
+# Take value of x m
 # ------------------------------------------------------
 
-Temp_c0=np.zeros(len(Depth_matrix_c))
+Temp_c5=np.zeros(len(Depth_matrix_c))
 for i in range(0,len(Depth_matrix_c)):
     index_d=np.where(Depth_matrix_c[i]==5)
     if len(index_d[0])>0:
-        Temp_c0[i]=Temp_matrix_c[i][index_d][0]
+        Temp_c5[i]=Temp_matrix_c[i][index_d][0]
     if len(index_d[0])==0:
-        Temp_c0[i]='nan'
+        Temp_c5[i]='nan'
+        
+        
+Temp_c2=np.zeros(len(Depth_matrix_c))
+for i in range(0,len(Depth_matrix_c)):
+    index_d=np.where(Depth_matrix_c[i]==2)
+    if len(index_d[0])>0:
+        Temp_c2[i]=Temp_matrix_c[i][index_d][0]
+    if len(index_d[0])==0:
+        Temp_c2[i]='nan'
+        
+Temp_c0=np.zeros(len(Depth_matrix_c))
+Depth_c0=np.zeros(len(Depth_matrix_c))
+for i in range(0,len(Depth_matrix_c)):
+    index_d=[[0]]
+    if len(index_d[0])>0:
+        Temp_c0[i]=Temp_matrix_c[i][index_d][0]
+        Depth_c0[i]=Depth_matrix_c[i][index_d][0]
+    if len(index_d[0])==0:
+        Temp_c0[i]=Temp_matrix_c[i][index_d][0]
+        Depth_c0[i]=Depth_matrix_c[i][index_d][0]
 
 #%%
 # ------------------------------------------------------
 # Plot scatter
 # ------------------------------------------------------
+plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
 
-plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
-plt.scatter(np.array(Temp_c0),np.array(Temp_vec_m0)-273.15,s=100,c='r',alpha=1,zorder=15)
+cm = plt.cm.get_cmap('jet')
+colors=np.linspace(Depth_c0[0],Depth_c0[len(Depth_c0)-1],len(Depth_c0))
+sc=plt.scatter(np.array(Temp_c0),np.array(Temp_vec_m0)-273.15,s=100,alpha=0.6,zorder=15,c=colors,vmin=2,vmax=5,cmap=cm,linewidth=1, edgecolor='k')
+a=plt.colorbar(sc)
+
+#plt.scatter(np.array(Temp_c0),np.array(Temp_vec_m0)-273.15,s=100,c='r',alpha=1,zorder=15)
+#plt.scatter(np.array(Temp_c2),np.array(Temp_vec_m0)-273.15,s=100,c='b',alpha=1,zorder=15)
+#plt.scatter(np.array(Temp_c5),np.array(Temp_vec_m0)-273.15,s=100,c='k',alpha=1,zorder=15)
 plt.plot([27,30], [27,30],'k')
-plt.ylabel('Temperature Mercator [K]',fontsize=15)
-plt.xlabel('Temperature CTD [K]',fontsize=15)
+plt.ylabel(r'Temperature Mercator [$^0$C]',fontsize=15)
+plt.xlabel(r'Temperature CTD [$^0$C]',fontsize=15)
 plt.xlim([29,30])
 plt.ylim([29,30])
 plt.tick_params(axis='both', which='major', labelsize=15)
+a.ax.tick_params(labelsize=15)
+a.set_label(r'Depth (m)',size=15)
+savefig('Scatter_Mercator.pdf',bbox_inches='tight')
+
+#%%
+from scipy.stats import norm
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+
+Error_matrix2=[]
+for i in range(0,len(Temp_matrix_c)):
+    Error_matrix2.append(np.transpose(np.array(Temp_c0))-(np.array(Temp_vec_m0)-273.15))
+
+CHOOSE=Error_matrix2
+
+plt.figure(figsize=(8,4),dpi=1000)
+matrix=[]
+for i in range(0,len(CHOOSE)):
+    matrix=matrix+list(CHOOSE[i])
+
+matrix2=[]
+for i in range(0,len(matrix)):
+    if not isnan(matrix[i]):
+        matrix2.append(matrix[i])
+        
+(mu, sigma) = norm.fit(matrix2)
+n, bins, patches = plt.hist(matrix2, 60, normed=1, alpha=1,histtype='stepfilled')
+y = mlab.normpdf( bins, mu, sigma)
+l = plt.plot(bins, y, 'k--', linewidth=3)
+#plt.plot([0,0], [0,max(y)],'-',color='k',linewidth=4,zorder=15)
+#plt.plot([mu,mu], [0,max(y)],color='brown',linewidth=4,zorder=15)
+#plt.plot([0,0], [0,10],'--',color='k',linewidth=2,zorder=1)
+#plt.plot([mu,mu], [0,10],'--',color='brown',linewidth=2,zorder=1)
+plt.plot([0,0], [0,10],'-',color='k',linewidth=3,zorder=1)
+#plt.plot([mu,mu], [0,10],'-',color='r',linewidth=3,zorder=1)
+plt.text(-0.75,4,'Mean',fontsize=15)
+plt.text(-0.75,3.5,'Variance',fontsize=15)
+#plt.text(-0.44,8,'-',fontsize=20)
+plt.text(-0.4,4,round(mu,3),fontsize=15)
+plt.text(-0.4,3.5,round(sigma**2.,3),fontsize=15)
+
+plt.xlabel(r'Temperature error [$^0$C]',fontsize=15)
+plt.xlim([-1,1])
+plt.ylim([0,5])
+plt.ylabel('Frequency',fontsize=15)
+plt.tick_params(axis='both', which='major', labelsize=15)
+
+savefig('PDF_Mercatorhighest.pdf',bbox_inches='tight')
+
+
 
 #%%
 # ------------------------------------------------------

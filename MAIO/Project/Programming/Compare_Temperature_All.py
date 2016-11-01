@@ -129,7 +129,7 @@ for i in range(0,len(Error_matrix)):
         Error_vec.append(np.array(Error_matrix)[i][j])
     Error_matrix3.append(Error_vec)
 
-CHOOSE=Error_matrix2
+CHOOSE=Error_matrix
 #Error_matrix   : Raw
 #Error_matrix2  : Refined with lag/bias
 #Error_matrix3  : Specific depths
@@ -157,16 +157,79 @@ plt.plot([0,0], [0,10],'-',color='k',linewidth=3,zorder=1)
 plt.text(-0.75,8,'Mean',fontsize=15)
 plt.text(-0.75,7,'Variance',fontsize=15)
 #plt.text(-0.44,8,'-',fontsize=20)
-plt.text(-0.4,8,'0.000',fontsize=15)
-plt.text(-0.4,7,'0.008',fontsize=15)
+plt.text(-0.4,8,round(mu,3),fontsize=15)
+plt.text(-0.4,7,round(sigma**2.,3),fontsize=15)
 
-plt.xlabel('Temperature error',fontsize=15)
+plt.xlabel(r'Temperature error [$^0$C]',fontsize=15)
 plt.xlim([-1,1])
 plt.ylim([0,10])
 plt.ylabel('Frequency',fontsize=15)
 plt.tick_params(axis='both', which='major', labelsize=15)
 
-savefig('PDF_Calibrated.pdf',bbox_inches='tight')
+#savefig('PDF_Calibrated.pdf',bbox_inches='tight')
+
+# ------------------------------------------------------
+# Plot depth profiles: Bias
+# ------------------------------------------------------
+#%%
+plt.figure(figsize=(8,4),dpi=1000)
+matrix=Bias_vector
+
+matrix2=[]
+for i in range(0,len(matrix)):
+    if not isnan(matrix[i]):
+        matrix2.append(matrix[i])
+        
+(mu, sigma) = norm.fit(matrix2)
+n, bins, patches = plt.hist(matrix2, 15, normed=1, alpha=1,histtype='stepfilled')
+y = mlab.normpdf( bins, mu, sigma)
+l = plt.plot(bins, y, 'k--', linewidth=3)
+plt.plot([0,0], [0,10],'-',color='k',linewidth=3,zorder=1)
+#plt.plot([mu,mu], [0,10],'-',color='r',linewidth=3,zorder=1)
+plt.text(-0.18,8,'Mean',fontsize=15)
+plt.text(-0.18,7,'Variance',fontsize=15)
+#plt.text(-0.44,8,'-',fontsize=20)
+plt.text(-0.1,8,round(mu,3),fontsize=15)
+plt.text(-0.1,7,round(sigma**2.,3),fontsize=15)
+
+plt.xlabel(r'Temperature error [$^0$C]',fontsize=15)
+#plt.xlim([-1,1])
+plt.ylim([0,10])
+plt.ylabel('Frequency',fontsize=15)
+plt.tick_params(axis='both', which='major', labelsize=15)
+
+savefig('PDF_Bias.pdf',bbox_inches='tight')
+
+# ------------------------------------------------------
+# Plot depth profiles: Lag
+# ------------------------------------------------------
+#%%
+plt.figure(figsize=(8,4),dpi=1000)
+matrix=Lag_vector
+
+matrix2=[]
+for i in range(0,len(matrix)):
+    if not isnan(matrix[i]):
+        matrix2.append(matrix[i])
+        
+(mu, sigma) = norm.fit(matrix2)
+n, bins, patches = plt.hist(matrix2, 30, normed=1, alpha=1,histtype='stepfilled')
+y = mlab.normpdf( bins, mu, sigma)
+l = plt.plot(bins, y, 'k--', linewidth=3)
+plt.plot([0,0], [0,10],'-',color='k',linewidth=3,zorder=1)
+#plt.plot([mu,mu], [0,10],'-',color='r',linewidth=3,zorder=1)
+#plt.text(-0.18,8,'Mean',fontsize=15)
+#plt.text(-0.18,7,'Variance',fontsize=15)
+#plt.text(-0.1,8,round(mu,3),fontsize=15)
+#plt.text(-0.1,7,round(sigma**2.,3),fontsize=15)
+
+plt.xlabel(r'Temperature error [$^0$C]',fontsize=15)
+#plt.xlim([-1,1])
+#plt.ylim([0,10])
+plt.ylabel('Frequency',fontsize=15)
+plt.tick_params(axis='both', which='major', labelsize=15)
+
+#savefig('PDF_Bias.pdf',bbox_inches='tight')
 
 # ------------------------------------------------------
 # Plot RSME versus time difference
@@ -182,15 +245,76 @@ for i in range(0,len(Temp_matrix_s)):
     Depth_vec.append(np.max(Depth_matrix[i]))
 
 colors=Depth_vec
-plt.figure(num=None, figsize=(8,4),dpi=150, facecolor='w', edgecolor='k')
-sc=plt.scatter(np.abs(Timedif_vector),RSME_vec, c=colors,alpha=0.75,s=100,cmap=cm,edgecolor='k')
-plt.colorbar(sc)
-plt.ylabel('RSME [K]',fontsize=15)
+plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
+sc=plt.scatter(np.abs(Timedif_vector),RSME_vec, c=colors,alpha=0.75,s=150,cmap=cm,edgecolor='k',linewidth=1.5)
+a=plt.colorbar(sc)
+plt.ylabel(r'RSME [$^0$C]',fontsize=15)
 plt.xlabel('Absolute time difference [h]',fontsize=15)
 plt.xlim([0,5.2])
 plt.ylim([0,0.4])
 plt.tick_params(axis='both', which='major', labelsize=15)
+a.ax.tick_params(labelsize=15)
+a.set_label(r'Depth (m)',size=15)
 
+savefig('Timedifference.pdf',bbox_inches='tight')
+#%%
+# ------------------------------------------------------
+# Plot RSME versus time
+# ------------------------------------------------------
+
+Temp_c5=np.zeros(len(Depth_matrix))
+for i in range(0,len(Depth_matrix)):
+    index_d=np.where(Depth_matrix[i]==5)
+    if len(index_d[0])>0:
+        Temp_c5[i]=Temp_matrix_c[i][index_d][0]
+    if len(index_d[0])==0:
+        Temp_c5[i]='nan'
+        
+        
+Temp_c2=np.zeros(len(Depth_matrix))
+for i in range(0,len(Depth_matrix)):
+    index_d=np.where(Depth_matrix[i]==2)
+    if len(index_d[0])>0:
+        Temp_c2[i]=Temp_matrix_c[i][index_d][0]
+    if len(index_d[0])==0:
+        Temp_c2[i]='nan'
+        
+Temp_c0=np.zeros(len(Depth_matrix))
+Depth_c0=np.zeros(len(Depth_matrix))
+for i in range(0,len(Depth_matrix)):
+    index_d=[[0]]
+    if len(index_d[0])>0:
+        Temp_c0[i]=Temp_matrix_c[i][index_d][0]
+        Depth_c0[i]=Depth_matrix[i][index_d][0]
+    if len(index_d[0])==0:
+        Temp_c0[i]=Temp_matrix_c[i][index_d][0]
+        Depth_c0[i]=Depth_matrix[i][index_d][0]
+#%%
+Time_vector=np.array(ctd_time)
+Temp_vector=np.zeros(35)
+Depth_vec=[]
+cm = plt.cm.get_cmap('jet')
+
+for i in range(0,len(Temp_matrix_s)):
+    #RSME_vec.append(np.sqrt(np.mean((np.array(Temp_matrix_s[i])-np.array(Temp_matrix_c[i]))**2)))
+    index=np.where(np.transpose(Depth_matrix[i])==5.)
+    if len(index[0])>0:
+        Temp_vector[i]=Temp_matrix_c[i][index[0]]
+    if len(index[0])==0:
+        Temp_vector[i]='nan'
+
+colors=Lat_vec_c
+plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
+sc=plt.scatter(np.abs(Time_vector),Temp_vector, c=colors,alpha=0.75,s=150,cmap=cm,edgecolor='k',linewidth=1.5)
+a=plt.colorbar(sc)
+plt.ylabel(r'Temperature [$^0$C]',fontsize=15)
+plt.xlabel('Time [h UTC]',fontsize=15)
+plt.xlim([10,24])
+plt.tick_params(axis='both', which='major', labelsize=15)
+a.ax.tick_params(labelsize=15)
+a.set_label(r'Latitude ($^0$N)',size=15)
+
+savefig('CTD-UTC.pdf',bbox_inches='tight')
 
 # ------------------------------------------------------
 # Plot RSME versus maximum depth (colors=Latitude)
