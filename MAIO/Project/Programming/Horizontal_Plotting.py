@@ -2,7 +2,7 @@
 # Getting amount of CTD and 
 # ------------------------------------------------------
 
-which_depth=50 #meters
+which_depth=35 #meters
 directory_CTD = 'C:\Users\Mark\Documents\Studie\MAIO_zip\MAIO/CTD_1m/'
 CTD_files = glob.glob(directory_CTD+'*')
 which_CTD_vec=np.arange(0,63,1)
@@ -94,34 +94,57 @@ Lat2=Lat_vec_c
 Temp3=Temp_matrix_c
 Lon3=Lon_vec_c
 Lat3=Lat_vec_c
+#%%
+Tempd=Temp_matrix_c
+Lond=Lon_vec_c
+Latd=Lat_vec_c
 
+vmina=27.5
+vmaxa=29.8
+
+xi = np.linspace(np.min(Lond),np.max(Lond), 30)
+yi = np.linspace(np.min(Latd),np.max(Latd),30)
+zi = griddata(Lond,Latd, Tempd, xi, yi, interp='linear')
+
+Matrix=np.zeros(shape=(len(yi),len(yi)))
+for i in range(0,len(yi)):
+    for j in range(0,len(xi)):
+        if np.isnan(zi[i][j])==True:
+            Matrix[i][j]==0
+        else:
+            Matrix[i][j]=zi[i][j]
+AKA=plt.contourf(xi,yi,Matrix,25,vmin=vmina,vmax=vmaxa)
 
 #%%
 # ------------------------------------------------------
 # Plot temperatures of CTD horizontally
 # ------------------------------------------------------
 
-matplotlib.style.use('ggplot')
+matplotlib.style.use('classic')
 from scipy.interpolate import griddata
 from mpl_toolkits.basemap import Basemap
 from matplotlib.mlab import griddata
 import matplotlib.colors as colors
 
-fig, (ax1,ax2,ax3)= plt.subplots(3,1,sharex=True,figsize=(10,8))
+fig, (ax1,ax2,ax3)= plt.subplots(3,1,sharex=True,figsize=(10,8),dpi=1000)
 #m = Basemap(projection = 'merc',
 #llcrnrlat=17.2, urcrnrlat=17.9,
 #llcrnrlon=-64.5, urcrnrlon=-60.3,
 #resolution='i', area_thresh=0.001)
 
-vmina=27.3
-vmaxa=30.3
-colormapused=plt.cm.rainbow
+#vmina=27.3
+#vmaxa=29.7
+colormapused=plt.cm.jet
 latmax=17.9
 latmin=17.2
 lonmax=-60
 lonmin=-64.5
 amountcolors=25
-scattersize=15
+scattersize=10
+levels_bath=[50,1000,5000]
+amountcontours=8
+alpha1=1
+
 
 # ------------------------------------------------------
 # Subplot 1
@@ -141,13 +164,14 @@ for i in range(0,len(yi)):
         
 x,y=(xi,yi)
 c=ax1.contourf(x,y,Matrix,amountcolors,vmin=vmina,vmax=vmaxa,cmap=colormapused)
+e=ax1.contour(x,y,Matrix,amountcontours,colors='k')
 x1,y1=(Lon_bath,Lat_bath)
-b=ax1.contour(x1,y1,-Depth,levels=[15,75,250,1000,5000],cmap=plt.cm.Greys,norm=colors.LogNorm(vmin=3,vmax=10000))
+b=ax1.contour(x1,y1,-Depth,levels=levels_bath,colors='gray',norm=colors.LogNorm(vmin=3,vmax=10000),linewidth=0.5,zorder=11)
 x1,y1=(Lon_bath,Lat_bath)
-d=ax1.contourf(x1,y1,-Depth,levels=[0,5],colors='white')
+d=ax1.contourf(x1,y1,-Depth,levels=[0,5],colors='white',zorder=10)
 ax1.set_ylabel('Latitude',fontsize=15)
 lon,lat=(Lon1,Lat1)
-ax1.scatter(lon,lat,s=scattersize,alpha=0.7,c='k')
+ax1.scatter(lon,lat,s=scattersize,alpha=alpha1,c='k',zorder=2)
 ax1.set_xlim([lonmin,lonmax])
 ax1.set_ylim([latmin,latmax])
 ax1.tick_params(axis='both', which='major', labelsize=15)
@@ -170,13 +194,14 @@ for i in range(0,len(yi)):
         
 x,y=(xi,yi)
 c5=ax2.contourf(x,y,Matrix,amountcolors,vmin=vmina,vmax=vmaxa,cmap=colormapused)
+e=ax2.contour(x,y,Matrix,amountcontours,colors='k')
 x1,y1=(Lon_bath,Lat_bath)
-b=ax2.contour(x1,y1,-Depth,levels=[15,75,250,1000,5000],cmap=plt.cm.Greys,norm=colors.LogNorm(vmin=3,vmax=10000))
+b=ax2.contour(x1,y1,-Depth,levels=levels_bath,colors='gray',norm=colors.LogNorm(vmin=3,vmax=10000),linewidth=0.5,zorder=11)
 x1,y1=(Lon_bath,Lat_bath)
-d=ax2.contourf(x1,y1,-Depth,levels=[0,15],colors='white')
+d=ax2.contourf(x1,y1,-Depth,levels=[0,15],colors='white',zorder=10)
 ax2.set_ylabel('Latitude',fontsize=15)
 lon,lat=(Lon2,Lat2)
-ax2.scatter(lon,lat,s=scattersize,alpha=0.7,c='k')
+ax2.scatter(lon,lat,s=scattersize,alpha=alpha1,c='k')
 ax2.set_xlim([lonmin,lonmax])
 ax2.set_ylim([latmin,latmax])
 ax2.tick_params(axis='both', which='major', labelsize=15)
@@ -199,13 +224,14 @@ for i in range(0,len(yi)):
         
 x,y=(xi,yi)
 c=ax3.contourf(x,y,Matrix,amountcolors,vmin=vmina,vmax=vmaxa,cmap=colormapused)
+e=ax3.contour(x,y,Matrix,amountcontours,colors='k')
 x1,y1=(Lon_bath,Lat_bath)
-b=ax3.contour(x1,y1,-Depth,levels=[15,75,250,1000,5000],cmap=plt.cm.Greys,norm=colors.LogNorm(vmin=3,vmax=10000))
+b=ax3.contour(x1,y1,-Depth,levels=levels_bath,colors='gray',norm=colors.LogNorm(vmin=3,vmax=10000),linewidth=0.5,zorder=11)
 x1,y1=(Lon_bath,Lat_bath)
-d=ax3.contourf(x1,y1,-Depth,levels=[0,75],colors='white')
+d=ax3.contourf(x1,y1,-Depth,levels=[0,75],colors='white',zorder=10)
 ax3.set_ylabel('Latitude',fontsize=15)
 lon,lat=(Lon3,Lat3)
-ax3.scatter(lon,lat,s=scattersize,alpha=0.7,c='k')
+ax3.scatter(lon,lat,s=scattersize,alpha=alpha1,c='k')
 ax3.set_xlim([lonmin,lonmax])
 ax3.set_ylim([latmin,latmax])
 ax3.tick_params(axis='both', which='major', labelsize=15)
@@ -217,7 +243,8 @@ c.set_clim(vmin=vmina,vmax=vmaxa)
 fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
 v=np.linspace(vmina,vmaxa,amountcolors, endpoint=True)
-a=fig.colorbar(c,cax=cbar_ax,extend='both')#,ticks=[27,30])#,norm=plt.colors.Normalize(vmin=vmina, vmax=vmaxa))
+a=fig.colorbar(AKA,cax=cbar_ax,extend='both')#,ticks=[27,30])#,norm=plt.colors.Normalize(vmin=vmina, vmax=vmaxa))
 
 a.ax.tick_params(labelsize=15)
 a.set_label(r'Temperature ($^0$C)',size=15)
+savefig('Horizontal_all.pdf',bbox_inches='tight')

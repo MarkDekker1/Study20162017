@@ -9,6 +9,8 @@
 which_SCAMP_vec=np.arange(0,35,1)
 which_CTD_vec=[52,53,54,55,56,57,57,57,58,58,59,61,61,0,2,2,3,5,6,7,7,8,9,10,11,12,13,14,15,18,18,20,21,22,22]
 
+which_CTD_vec=np.arange(1,63,1)
+which_SCAMP_vec=np.zeros(63)+np.int(1)
 #which_CTD_vec=[which_CTD_vec[which]]
 #which_SCAMP_vec=[which_SCAMP_vec[which]]
 Error_matrix=[]
@@ -34,7 +36,7 @@ scamp_time=[]
 
 for couple in range(0,len(which_CTD_vec)):
     which_CTD=which_CTD_vec[couple]
-    which_SCAMP=which_SCAMP_vec[couple]
+    which_SCAMP=1#np.int(which_SCAMP_vec[couple])
 
 # ------------------------------------------------------
 # Defining parameters
@@ -291,7 +293,7 @@ for i in range(0,len(Depth_matrix)):
         Depth_c0[i]=Depth_matrix[i][index_d][0]
 #%%
 Time_vector=np.array(ctd_time)
-Temp_vector=np.zeros(35)
+Temp_vector=np.zeros(62)
 Depth_vec=[]
 cm = plt.cm.get_cmap('jet')
 
@@ -303,16 +305,28 @@ for i in range(0,len(Temp_matrix_s)):
     if len(index[0])==0:
         Temp_vector[i]='nan'
 
-colors=Lat_vec_c
+Temp_vector2=[]
+Time_vector2=[]
+Lon2=[]
+for i in range(0,len(Temp_vector)):
+    if not isnan(Temp_vector[i]):
+        Temp_vector2.append(Temp_vector[i])
+        Time_vector2.append(Time_vector[i])
+        Lon2.append(Lon_vec_c[i])
+
+colors=Lon2
 plt.figure(num=None, figsize=(8,4),dpi=1000, facecolor='w', edgecolor='k')
-sc=plt.scatter(np.abs(Time_vector),Temp_vector, c=colors,alpha=0.75,s=150,cmap=cm,edgecolor='k',linewidth=1.5)
+sc=plt.scatter(np.abs(Time_vector2),Temp_vector2, c=colors,alpha=0.75,s=150,cmap=cm,edgecolor='k',linewidth=1.5,vmin=-64.5,vmax=-62.5)
+z=np.polyfit(np.abs(Time_vector2),Temp_vector2,1)
+p=np.poly1d(z)
+plt.plot(Time_vector2,p(Time_vector2),'k-',linewidth=3)
 a=plt.colorbar(sc)
 plt.ylabel(r'Temperature [$^0$C]',fontsize=15)
 plt.xlabel('Time [h UTC]',fontsize=15)
-plt.xlim([10,24])
+plt.xlim([10,24.5])
 plt.tick_params(axis='both', which='major', labelsize=15)
 a.ax.tick_params(labelsize=15)
-a.set_label(r'Latitude ($^0$N)',size=15)
+a.set_label(r'Longitude ($^0$W)',size=15)
 
 savefig('CTD-UTC.pdf',bbox_inches='tight')
 
